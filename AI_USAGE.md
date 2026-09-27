@@ -13,22 +13,26 @@ Claude Code (VS Code extension), model Claude Opus 5.5.
 3. **Repository initialisation.** Git's line-ending conversion would have altered the starter CSVs and broken their manifest checksums. `.gitattributes` now keeps data files byte-exact, and the checksums were verified on disk and in git.
 4. **Scaffolding.** uv project, CLI stub, and tests. A file lock blocked a move, so the files were copied and their checksums re-verified. `pytest` 4/4, `ruff` clean.
 5. **Rules file.** At the human's request, the agent extracted every rule from the brief into `CLAUDE.md`, which the agent loads each session, so requirements such as frequency integrity and censoring aren't lost as work grows. The human asked for full coverage; the agent re-checked the brief and added two missed items (business/engineering outcomes, submission access). The brief remains the source of truth.
+6. **Data profiling (agent claims corrected).** `scripts/profile_starter_data.py` writes [docs/data_profile.md](docs/data_profile.md). The data disagreed with the agent's earlier generator-based expectations in three places: voluntary exits with a blank regretted flag are **2**, not "up to 12"; terminations after the as-of date are **0**, not "possible"; the claim that the six-month boundary "really moves the metric" was overstated, since no exits fall on days 181–182. Profiling also found a defect the agent had not listed: **90** End of Contract exits on Permanent employees.
+7. **Generator disclosure (human insight).** The human noticed that the generator in the brief shows attrition is driven only by internal factors, not external data. The agent confirmed that the generator, re-run in Node, reproduces all three CSVs byte for byte. Decision: disclose this openly; do not use the formula as an analysis input; use it only to sanity-check that the pipeline recovers known internal effects and to frame external associations as non-causal.
+8. **Clarification questions.** [docs/clarification_questions.md](docs/clarification_questions.md): ten questions, each with a default assumption. Pending human review before sending.
 
 ## Suggestions rejected or changed
 
 | Agent suggestion | Outcome |
 |---|---|
 | Custom repository layout | Changed to follow the brief's suggested shape |
+| Defect inventory from reading generator code | Corrected by profiling the actual data (3 overstatements, 1 missed defect) |
 
 ## Verification
 
 - Starter-pack SHA-256 checksums enforced by `tests/test_starter_data.py`.
-- Data claims to be confirmed by profiling; external dataset codes and lags to be checked against provider sources.
+- Agent claims about the data checked by profiling; the generator re-run to confirm it is the data source.
+- External dataset codes and lags to be checked against provider sources.
 
 ## Remaining risks
 
-- Defect inventory not yet confirmed against the data.
-- External indicators and metric definitions not yet decided.
+- External indicators and metric definitions not yet decided; clarification answers pending.
 
 ---
 

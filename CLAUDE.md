@@ -23,6 +23,7 @@ Rules for working in this repository. Source of truth: [docs/assessment_brief.ht
 - The data is intentionally imperfect. **Do not assume blanks are errors, or that populated values are valid.** Profile before trusting.
 - Recent hires may not have completed an objective's observation window: treat them as censored, not as retained.
 - Canonicalise country codes before joining (`EL` is Eurostat's code for Greece; `ROM` is a Romania alias). Every exclusion or correction must be counted and reported, never silent.
+- The brief's embedded JavaScript generator reproduces the starter CSVs exactly. Attrition in it depends only on internal factors (country, hire year, business unit, level, contract type), never on external data. **Never use the formula as an analysis input or tune results to it.** Disclose it openly, use it only to sanity-check that the pipeline recovers known internal effects, and treat every external association as non-causal.
 
 ## 3. Retention objectives
 
