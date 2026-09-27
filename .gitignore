@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+
+# Tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local / secrets
+.env
+.env.*
+!.env.example
+
+# Local databases and scratch outputs
+*.duckdb
+*.duckdb.wal
+data/tmp/
+
+# Playwright
+test-results/
+playwright-report/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,9 @@
+# Normalise source files to LF in the repository.
+* text=auto eol=lf
+
+# Data files are evidence: keep bytes exactly as supplied so SHA-256
+# checksums in the assessment manifest stay valid.
+*.csv -text
+*.json -text
+assessment_files/** -text
+data/** -text
