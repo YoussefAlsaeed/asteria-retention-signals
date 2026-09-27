@@ -33,3 +33,6 @@ playwright-report/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Old starter-pack location (files moved to data/raw-or-fixtures/starter/)
+assessment_files/
