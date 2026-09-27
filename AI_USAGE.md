@@ -12,6 +12,7 @@ Claude Code (VS Code extension), model Claude Opus 5.5.
 2. **Repository structure (suggestion changed).** The agent proposed a custom layout. The human pointed out the brief's suggested shape. The layout was reworked to use those top-level names, with domain boundaries inside `src/asteria/`.
 3. **Repository initialisation.** Git's line-ending conversion would have altered the starter CSVs and broken their manifest checksums. `.gitattributes` now keeps data files byte-exact, and the checksums were verified on disk and in git.
 4. **Scaffolding.** uv project, CLI stub, and tests. A file lock blocked a move, so the files were copied and their checksums re-verified. `pytest` 4/4, `ruff` clean.
+5. **Rules file.** At the human's request, the agent extracted every rule from the brief into `CLAUDE.md`, which the agent loads each session, so requirements such as frequency integrity and censoring aren't lost as work grows. The human asked for full coverage; the agent re-checked the brief and added two missed items (business/engineering outcomes, submission access). The brief remains the source of truth.
 
 ## Suggestions rejected or changed
 
