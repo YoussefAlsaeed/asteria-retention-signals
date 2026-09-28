@@ -23,7 +23,7 @@ Rules for working in this repository. Source of truth: [docs/assessment_brief.ht
 - The data is intentionally imperfect. **Do not assume blanks are errors, or that populated values are valid.** Profile before trusting.
 - Recent hires may not have completed an objective's observation window: treat them as censored, not as retained.
 - Canonicalise country codes before joining (`EL` is Eurostat's code for Greece; `ROM` is a Romania alias). Every exclusion or correction must be counted and reported, never silent.
-- The brief's embedded JavaScript generator reproduces the starter CSVs exactly. Attrition in it depends only on internal factors (country, hire year, business unit, level, contract type), never on external data. **Never use the formula as an analysis input or tune results to it.** Disclose it openly, use it only to sanity-check that the pipeline recovers known internal effects, and treat every external association as non-causal.
+- The brief's embedded JavaScript generator reproduces the starter CSVs exactly. Attrition in it depends only on internal factors (country, hire year, business unit, level, contract type), never on external data. **Never use the formula as an analysis input or tune results to it.** **Human decision: the analysis proceeds blind.** Do not consult the generator for expected effects; pull the real sources and test relationships on the data, as the brief intends. Correlation is still not causation.
 
 ## 3. Retention objectives
 
@@ -130,5 +130,6 @@ Also: submit as a public repository, or grant reviewers private access, by the r
 ## Repository conventions
 
 - Layout follows the brief's suggested shape: `README · docs/ · src/ · tests/ · data/raw-or-fixtures/ · data/curated/ · dashboard/ · presentation/ · AI_USAGE.md`, plus `config/`.
-- Commands: `uv sync`, `uv run pytest`, `uv run ruff check`, `uv run asteria --help`.
+- Commands: `uv sync`, `uv run pytest`, `uv run ruff check`, `uv run mypy`, `uv run asteria ingest` (replay, offline), `uv run asteria ingest --mode live`.
+- Never commit or push unless the human asks.
 - Git: commit as Youssef Alsaeed <yousefalsaeed2002@gmail.com>; push to `YoussefAlsaeed/asteria-retention-signals` (private). This repo's credential helper uses `gh auth git-credential`.

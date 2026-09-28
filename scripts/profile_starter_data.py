@@ -66,15 +66,21 @@ def main() -> None:
         (
             "Non-voluntary exit, regretted = true",
             int(
-                (df["termination_type"].isin(["Involuntary", "End of Contract"])
-                 & (df["regretted_exit"] == "true")).sum()
+                (
+                    df["termination_type"].isin(["Involuntary", "End of Contract"])
+                    & (df["regretted_exit"] == "true")
+                ).sum()
             ),
             "",
         ),
         (
             "End of Contract on Permanent employee",
-            int(((df["termination_type"] == "End of Contract")
-                 & (df["employment_type"] == "Permanent")).sum()),
+            int(
+                (
+                    (df["termination_type"] == "End of Contract")
+                    & (df["employment_type"] == "Permanent")
+                ).sum()
+            ),
             "Logical inconsistency",
         ),
         (
@@ -117,8 +123,13 @@ def main() -> None:
         *(
             section
             for column in [
-                "country_code", "business_unit", "career_level", "employment_type",
-                "termination_type", "regretted_exit", "source_system",
+                "country_code",
+                "business_unit",
+                "career_level",
+                "employment_type",
+                "termination_type",
+                "regretted_exit",
+                "source_system",
             ]
             for section in (value_counts(df, column), "")
         ),

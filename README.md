@@ -17,6 +17,16 @@ uv run ruff check  # lint
 uv run asteria --help
 ```
 
+## External data ingest
+
+```sh
+uv run asteria ingest               # replay committed snapshots (offline, deterministic)
+uv run asteria ingest --mode live   # call Eurostat and World Bank, refresh snapshots
+uv run asteria ingest --only unemployment_rate
+```
+
+Live runs validate each payload before storing it, leave unchanged snapshots untouched, and keep the previous snapshot if a source fails. Exit code 1 means at least one indicator failed; details are in the summary, the JSON logs on stderr, and `data/runs/ingest_<run_id>.json`. Sources and their limitations: [docs/source_register.md](docs/source_register.md).
+
 ## Repository layout
 
 | Path | Contents |

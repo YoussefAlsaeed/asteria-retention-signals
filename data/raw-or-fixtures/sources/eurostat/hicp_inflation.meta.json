@@ -1,0 +1,62 @@
+{
+  "provider": "eurostat",
+  "indicator_id": "hicp_inflation",
+  "dataset": "prc_hicp_minr",
+  "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr",
+  "request_params": [
+    [
+      "format",
+      "JSON"
+    ],
+    [
+      "lang",
+      "EN"
+    ],
+    [
+      "coicop18",
+      "TOTAL"
+    ],
+    [
+      "freq",
+      "M"
+    ],
+    [
+      "unit",
+      "RCH_A"
+    ],
+    [
+      "geo",
+      "BG"
+    ],
+    [
+      "geo",
+      "EL"
+    ],
+    [
+      "geo",
+      "IE"
+    ],
+    [
+      "geo",
+      "IT"
+    ],
+    [
+      "geo",
+      "PL"
+    ],
+    [
+      "geo",
+      "RO"
+    ],
+    [
+      "sinceTimePeriod",
+      "2019-01"
+    ]
+  ],
+  "fetched_at": "2026-09-28T01:56:20+00:00",
+  "http_status": 200,
+  "sha256": "ec86931f9a9d059a70c98f2b93e7a00b07733f8ff7d971bfe8ac2ff66d41186b",
+  "bytes": 13033,
+  "source_updated": "2026-09-17T11:00:00+0200",
+  "observation_count": 552
+}

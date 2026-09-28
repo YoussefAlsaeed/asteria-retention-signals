@@ -14,25 +14,38 @@ Claude Code (VS Code extension), model Claude Opus 5.5.
 4. **Scaffolding.** uv project, CLI stub, and tests. A file lock blocked a move, so the files were copied and their checksums re-verified. `pytest` 4/4, `ruff` clean.
 5. **Rules file.** At the human's request, the agent extracted every rule from the brief into `CLAUDE.md`, which the agent loads each session, so requirements such as frequency integrity and censoring aren't lost as work grows. The human asked for full coverage; the agent re-checked the brief and added two missed items (business/engineering outcomes, submission access). The brief remains the source of truth.
 6. **Data profiling (agent claims corrected).** `scripts/profile_starter_data.py` writes [docs/data_profile.md](docs/data_profile.md). The data disagreed with the agent's earlier generator-based expectations in three places: voluntary exits with a blank regretted flag are **2**, not "up to 12"; terminations after the as-of date are **0**, not "possible"; the claim that the six-month boundary "really moves the metric" was overstated, since no exits fall on days 181–182. Profiling also found a defect the agent had not listed: **90** End of Contract exits on Permanent employees.
-7. **Generator disclosure (human insight).** The human noticed that the generator in the brief shows attrition is driven only by internal factors, not external data. The agent confirmed that the generator, re-run in Node, reproduces all three CSVs byte for byte. Decision: disclose this openly; do not use the formula as an analysis input; use it only to sanity-check that the pipeline recovers known internal effects and to frame external associations as non-causal.
-8. **Clarification questions.** [docs/clarification_questions.md](docs/clarification_questions.md): ten questions, each with a default assumption. Pending human review before sending.
+7. **Generator disclosure (human insight).** The human noticed that the generator in the brief shows attrition is driven only by internal factors, not external data. The agent confirmed that the generator, re-run in Node, reproduces all three CSVs byte for byte. The human then argued the coefficients may themselves have been calibrated from external conditions. **Human decision: proceed blind.** The generator is not used in any analysis; external sources are pulled and relationships tested as the brief intends.
+8. **Clarification questions (scope cut by human).** The agent drafted ten questions. The human cut them to the three that can change an objective result (senior scope, cohort scope and maturity, headcount denominator); the other seven became documented assumptions. Sent as [docs/clarification_questions.pdf](docs/clarification_questions.pdf). The agent also softened one PDF sentence that claimed an unverified effect on the 7.5% threshold.
+9. **Source research (human search, agent fact-check).** The human used Claude web search to shortlist indicators. The agent verified every claim against the live APIs before accepting it:
+   - **Confirmed:** all datasets exist and cover all six countries 2019 onward; `jvs_q_nace2` is frozen at 2025-Q4 with successor `jvs_q_r21`; `prc_hicp_manr` is frozen at 2025-12 with successor `prc_hicp_minr`; `prc_hicp_fpd` holds first-released values.
+   - **Found by checking:** A-T vacancies missing for IE, EL, IT (B-T used instead); Ireland's GDP distorted by multinational accounting; Italy's sentiment missing 2020-04.
+   - **Changed:** World Bank GDP demoted to annual context; Eurostat economic sentiment added as the primary cycle indicator. Accepted by the human.
+   - **Agent's own errors caught:** two licence URLs recalled from memory were wrong (one 404, one redirect); replaced with pages verified to state CC BY 4.0.
+   - Evidence links: [Eurostat copyright notice](https://ec.europa.eu/eurostat/help/copyright-notice), [World Bank public licenses](https://datacatalog.worldbank.org/public-licenses), [Eurostat API guide](https://ec.europa.eu/eurostat/web/user-guides/data-browser/api-data-access/api-getting-started/api), [World Bank API guide](https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation), [une_rt_m](https://ec.europa.eu/eurostat/databrowser/view/une_rt_m/default/table), [jvs_q_r21](https://ec.europa.eu/eurostat/databrowser/view/jvs_q_r21/default/table), [prc_hicp_minr](https://ec.europa.eu/eurostat/databrowser/view/prc_hicp_minr/default/table), [prc_hicp_fpd](https://ec.europa.eu/eurostat/databrowser/view/prc_hicp_fpd/default/table), [ei_bssi_m_r2](https://ec.europa.eu/eurostat/databrowser/view/ei_bssi_m_r2/default/table), [NY.GDP.MKTP.KD.ZG](https://data.worldbank.org/indicator/NY.GDP.MKTP.KD.ZG). Full register: [docs/source_register.md](docs/source_register.md).
+10. **Ingest layer.** The agent built config-driven adapters (Eurostat JSON-stat, World Bank), a retrying HTTP fetcher, a checksummed raw store, and per-indicator failure isolation, with 40 new tests. Verification: a live run followed by an idempotent re-run (all "unchanged") and an offline replay; two bugs were injected on purpose and each was caught by the tests. Failures fixed along the way: a wrong tenacity import and three strict-mypy type errors.
 
 ## Suggestions rejected or changed
 
 | Agent suggestion | Outcome |
 |---|---|
 | Custom repository layout | Changed to follow the brief's suggested shape |
+| Ten clarification questions | Cut to three critical ones by the human |
 | Defect inventory from reading generator code | Corrected by profiling the actual data (3 overstatements, 1 missed defect) |
+| World Bank GDP as the cycle indicator (from the human's search) | Demoted to annual context after the Ireland distortion was found; sentiment added |
+| Licence URLs recalled from memory | Two were wrong; replaced with verified pages |
 
 ## Verification
 
 - Starter-pack SHA-256 checksums enforced by `tests/test_starter_data.py`.
 - Agent claims about the data checked by profiling; the generator re-run to confirm it is the data source.
-- External dataset codes and lags to be checked against provider sources.
+- Dataset codes, coverage, and licences checked against live provider APIs and terms pages.
+- Ingest tests validated by deliberately injecting bugs and confirming the tests fail.
 
 ## Remaining risks
 
-- External indicators and metric definitions not yet decided; clarification answers pending.
+- Metric definitions pending clarification answers.
+- `prc_hicp_fpd` release semantics (FIN vs FLS) inferred from data, not yet confirmed in Eurostat metadata.
+- Only inflation has first-release values; the other indicators carry revised values (look-ahead risk).
 
 ---
 

@@ -1,0 +1,62 @@
+{
+  "provider": "eurostat",
+  "indicator_id": "economic_sentiment",
+  "dataset": "ei_bssi_m_r2",
+  "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/ei_bssi_m_r2",
+  "request_params": [
+    [
+      "format",
+      "JSON"
+    ],
+    [
+      "lang",
+      "EN"
+    ],
+    [
+      "freq",
+      "M"
+    ],
+    [
+      "indic",
+      "BS-ESI-I"
+    ],
+    [
+      "s_adj",
+      "SA"
+    ],
+    [
+      "geo",
+      "BG"
+    ],
+    [
+      "geo",
+      "EL"
+    ],
+    [
+      "geo",
+      "IE"
+    ],
+    [
+      "geo",
+      "IT"
+    ],
+    [
+      "geo",
+      "PL"
+    ],
+    [
+      "geo",
+      "RO"
+    ],
+    [
+      "sinceTimePeriod",
+      "2019-01"
+    ]
+  ],
+  "fetched_at": "2026-09-28T01:56:21+00:00",
+  "http_status": 200,
+  "sha256": "6b235d028c6fd1630af6d7607cbe8ba058abb4c903ca78cc69263cceb8982912",
+  "bytes": 12654,
+  "source_updated": "2026-08-28T11:00:00+0200",
+  "observation_count": 551
+}

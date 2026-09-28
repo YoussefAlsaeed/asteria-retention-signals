@@ -1,19 +1,25 @@
 # Clarification questions
 
-One batch, sent once. Each question has the assumption we will use if no answer arrives. Evidence from [data_profile.md](data_profile.md).
+One batch, sent once ([clarification_questions.pdf](clarification_questions.pdf)). Only questions that can change a reported objective result are sent. Evidence from [data_profile.md](data_profile.md).
 
+## Sent
 
-| #   | Question                                                                                                                                                                                    | Default assumption if unanswered                                                                                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **Senior scope.** For `SENIOR_HIRE_12M`, which career levels count as senior: `Senior Leader` only, or also `Manager`? Is `Sr Mgmt` (10 rows) an alias of `Senior Leader`?                  | `Senior Leader` plus `Sr Mgmt` mapped to it; `Manager` excluded. Sensitivity shown with `Manager` included.                 |
-| 2   | **Six- and twelve-month boundaries.** Is "six months" measured in calendar months from hire date, or a fixed day count (e.g. 182 days)? Is an exit on the anniversary day retained or lost? | Calendar months; an employee is retained if still employed on the day the period ends.                                      |
-| 3   | **Cohort period.** Should cohorts be defined by hire month, and are only hires from 2021-01-01 in scope for the hire-based objectives (414 rows were hired in 2020)?                        | Monthly hire cohorts from 2021-01; only mature cohorts reported; 2020 hires excluded from cohorts but counted in headcount. |
-| 4   | **Regretted turnover denominator.** Is average headcount the mean of month-end headcounts over the trailing twelve months, or the average of opening and closing headcount?                 | Mean of the 12 month-end headcounts.                                                                                        |
-| 5   | **Unknown regretted flag.** Voluntary exits with a blank `regretted_exit`: treat as not regretted, exclude, or report a range?                                                              | Report the metric with blanks as not regretted, plus an upper bound with blanks as regretted.                               |
-| 6   | **Exits with no termination type** (13 rows): count them as exits for retention? Can they ever be regretted?                                                                                | Count as exits for retention objectives; not regretted; flagged in quality report.                                          |
-| 7   | **End of Contract on Permanent employees** (90 rows): is this a data error, or a valid case (e.g. contract type changed during employment)?                                                 | Accept as exits; flag as an inconsistency; do not reclassify.                                                               |
-| 8   | **Invalid records.** Rows with a termination before hire (5) or a blank hire date (5): exclude from all measures?                                                                           | Exclude and report counts.                                                                                                  |
-| 9   | **Reporting grain.** What granularity do leaders need for objective status: monthly, quarterly, or annual by country?                                                                       | Monthly measures, shown quarterly and annually in the dashboard.                                                            |
-| 10  | **Source systems.** Do `HCM_A` and `HCM_B` differ in how they record any field (e.g. regretted flag, termination type)?                                                                     | Treated as equivalent; source system kept as a lineage and quality dimension.                                               |
+| # | Question | Default assumption if unanswered |
+|---|---|---|
+| 1 | **Senior scope (`SENIOR_HIRE_12M`).** Which career levels count as senior hires: `Senior Leader` only, or also `Manager`? Is `Sr Mgmt` (10 records) an alias of `Senior Leader`? | `Senior Leader` plus `Sr Mgmt` mapped to it; `Manager` excluded. Sensitivity shown with `Manager` included. |
+| 2 | **Cohort scope and maturity (`NEW_HIRE_6M`, `SENIOR_HIRE_12M`).** Are only hires from 2021-01-01 in scope (414 records were hired in 2020)? Should cohorts be monthly by hire date, reporting only cohorts whose full window has elapsed by 2025-12-31? | Monthly hire cohorts from 2021-01; only mature cohorts reported, immature shown as pending; 2020 hires excluded from cohorts but counted in headcount. |
+| 3 | **Regretted turnover denominator (`REGRETTED_TURNOVER_12M`).** Is average headcount the mean of the 12 month-end headcounts in the trailing window, or the average of opening and closing headcount? | Mean of the 12 month-end headcounts. Numerator: voluntary exits flagged regretted within the window. |
 
+## Not sent: documented assumptions
 
+Low impact on results (few rows) or resolvable by a stated rule. Each is recorded, applied consistently, and reported in the quality output.
+
+| Topic | Assumption |
+|---|---|
+| Six/twelve-month boundary | Calendar months from hire date; retained if still employed on the final day (about 2 exits fall in the ambiguous range) |
+| Blank regretted flag on voluntary exits (2) | Main metric treats as not regretted; upper bound treats as regretted |
+| Exits with blank termination type (13) | Count as exits for retention; not regretted; flagged |
+| End of Contract on Permanent employees (90) | Accepted as exits; flagged as inconsistency; not reclassified |
+| Termination before hire (5), blank hire date (5) | Excluded from all measures; counts reported |
+| Reporting grain | Monthly measures, rolled up to quarter and year in the dashboard |
+| Source systems `HCM_A` / `HCM_B` | Treated as equivalent; kept as a lineage and quality dimension |

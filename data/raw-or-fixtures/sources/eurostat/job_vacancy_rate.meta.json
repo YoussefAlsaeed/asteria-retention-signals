@@ -1,0 +1,70 @@
+{
+  "provider": "eurostat",
+  "indicator_id": "job_vacancy_rate",
+  "dataset": "jvs_q_r21",
+  "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/jvs_q_r21",
+  "request_params": [
+    [
+      "format",
+      "JSON"
+    ],
+    [
+      "lang",
+      "EN"
+    ],
+    [
+      "freq",
+      "Q"
+    ],
+    [
+      "indic_em",
+      "JVR"
+    ],
+    [
+      "nace_r2_1",
+      "B-T"
+    ],
+    [
+      "s_adj",
+      "NSA"
+    ],
+    [
+      "sizeclas",
+      "TOTAL"
+    ],
+    [
+      "geo",
+      "BG"
+    ],
+    [
+      "geo",
+      "EL"
+    ],
+    [
+      "geo",
+      "IE"
+    ],
+    [
+      "geo",
+      "IT"
+    ],
+    [
+      "geo",
+      "PL"
+    ],
+    [
+      "geo",
+      "RO"
+    ],
+    [
+      "sinceTimePeriod",
+      "2019-Q1"
+    ]
+  ],
+  "fetched_at": "2026-09-28T01:56:20+00:00",
+  "http_status": 200,
+  "sha256": "85cc95fe52ba4b04f8a50180d7b77e62728d20643beccaaa73baabb7c63bb709",
+  "bytes": 7384,
+  "source_updated": "2026-09-15T11:00:00+0200",
+  "observation_count": 180
+}

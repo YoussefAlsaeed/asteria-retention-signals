@@ -1,0 +1,70 @@
+{
+  "provider": "eurostat",
+  "indicator_id": "unemployment_rate",
+  "dataset": "une_rt_m",
+  "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m",
+  "request_params": [
+    [
+      "format",
+      "JSON"
+    ],
+    [
+      "lang",
+      "EN"
+    ],
+    [
+      "age",
+      "TOTAL"
+    ],
+    [
+      "freq",
+      "M"
+    ],
+    [
+      "s_adj",
+      "SA"
+    ],
+    [
+      "sex",
+      "T"
+    ],
+    [
+      "unit",
+      "PC_ACT"
+    ],
+    [
+      "geo",
+      "BG"
+    ],
+    [
+      "geo",
+      "EL"
+    ],
+    [
+      "geo",
+      "IE"
+    ],
+    [
+      "geo",
+      "IT"
+    ],
+    [
+      "geo",
+      "PL"
+    ],
+    [
+      "geo",
+      "RO"
+    ],
+    [
+      "sinceTimePeriod",
+      "2019-01"
+    ]
+  ],
+  "fetched_at": "2026-09-28T01:56:19+00:00",
+  "http_status": 200,
+  "sha256": "bb4d4df9950f64e0727786d80f312438f0271725bc4e491b6c54b265fe7c5399",
+  "bytes": 12136,
+  "source_updated": "2026-09-22T11:00:00+0200",
+  "observation_count": 547
+}

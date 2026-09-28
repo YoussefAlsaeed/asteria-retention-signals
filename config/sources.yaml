@@ -1,0 +1,78 @@
+# External indicator catalogue. Verified against the live APIs on 2026-09-28;
+# evidence and limitations in docs/source_register.md.
+#
+# `filters` pin every non-geo, non-time dimension to one value, so each indicator is
+# exactly one series per country. Changing a filter changes the contract: update the
+# register and the replay fixtures together.
+
+providers:
+  eurostat:
+    name: Eurostat
+    base_url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data
+    licence: CC BY 4.0
+    terms_url: https://ec.europa.eu/eurostat/help/copyright-notice
+  worldbank:
+    name: World Bank (World Development Indicators)
+    base_url: https://api.worldbank.org/v2
+    licence: CC BY 4.0
+    terms_url: https://datacatalog.worldbank.org/public-licenses
+
+# History starts before the 2021 workforce horizon so lagged joins have look-back.
+history_start: "2019-01"
+
+indicators:
+  - id: unemployment_rate
+    provider: eurostat
+    dataset: une_rt_m
+    lens: labour_supply
+    title: Unemployment rate, seasonally adjusted, total population
+    frequency: M
+    unit: percent of labour force
+    filters: {freq: M, s_adj: SA, age: TOTAL, sex: T, unit: PC_ACT}
+
+  - id: job_vacancy_rate
+    provider: eurostat
+    dataset: jvs_q_r21            # successor of jvs_q_nace2 (frozen at 2025-Q4)
+    lens: labour_demand
+    title: Job vacancy rate, NACE Rev. 2.1 sections B-T, all enterprise sizes
+    frequency: Q
+    unit: percent of occupied plus vacant posts
+    # B-T, not A-T: A-T is missing for IE, EL and IT.
+    filters: {freq: Q, s_adj: NSA, indic_em: JVR, nace_r2_1: B-T, sizeclas: TOTAL}
+
+  - id: hicp_inflation
+    provider: eurostat
+    dataset: prc_hicp_minr        # successor of prc_hicp_manr (frozen at 2025-12)
+    lens: cost_of_living
+    title: HICP all-items, annual rate of change (latest revised values)
+    frequency: M
+    unit: percent change on same month of previous year
+    filters: {freq: M, unit: RCH_A, coicop18: TOTAL}
+
+  - id: hicp_inflation_first_release
+    provider: eurostat
+    dataset: prc_hicp_fpd
+    lens: cost_of_living
+    title: HICP all-items, annual rate of change (values as first released)
+    frequency: M
+    unit: percent change on same month of previous year
+    # `release` is left open: FIN and FLS (flash) are both kept and chosen in curation.
+    filters: {freq: M, unit: RCH_A, coicop18: TOTAL}
+
+  - id: economic_sentiment
+    provider: eurostat
+    dataset: ei_bssi_m_r2
+    lens: economic_cycle
+    title: Economic sentiment indicator, seasonally adjusted
+    frequency: M
+    unit: index, long-term average = 100
+    filters: {freq: M, indic: BS-ESI-I, s_adj: SA}
+
+  - id: gdp_growth
+    provider: worldbank
+    dataset: NY.GDP.MKTP.KD.ZG
+    lens: economic_cycle
+    title: GDP growth, constant prices, annual
+    frequency: A
+    unit: percent change on previous year
+    filters: {}

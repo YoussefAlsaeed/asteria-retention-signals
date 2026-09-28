@@ -36,3 +36,6 @@ Thumbs.db
 
 # Old starter-pack location (files moved to data/raw-or-fixtures/starter/)
 assessment_files/
+
+# Per-run ingest manifests (timestamps differ every run)
+data/runs/

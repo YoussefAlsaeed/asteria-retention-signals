@@ -1,0 +1,33 @@
+# Canonical country = ISO 3166-1 alpha-2. Each provider's own code is mapped here,
+# never inferred in code. Aliases cover non-canonical codes seen in the workforce data.
+countries:
+  - code: GR
+    name: Greece
+    eurostat: EL
+    worldbank: GRC
+    aliases: [EL]
+  - code: RO
+    name: Romania
+    eurostat: RO
+    worldbank: ROU
+    aliases: [ROM]
+  - code: PL
+    name: Poland
+    eurostat: PL
+    worldbank: POL
+    aliases: []
+  - code: IT
+    name: Italy
+    eurostat: IT
+    worldbank: ITA
+    aliases: []
+  - code: IE
+    name: Ireland
+    eurostat: IE
+    worldbank: IRL
+    aliases: []
+  - code: BG
+    name: Bulgaria
+    eurostat: BG
+    worldbank: BGR
+    aliases: []
