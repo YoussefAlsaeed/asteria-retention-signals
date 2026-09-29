@@ -79,7 +79,12 @@ class EurostatAdapter:
                     dimensions={d: codes[d] for d in extra_dims},
                 )
             )
-        return ParsedPayload(observations=observations, source_updated=doc.get("updated"))
+        labels = doc.get("extension", {}).get("status", {}).get("label", {})
+        return ParsedPayload(
+            observations=observations,
+            source_updated=doc.get("updated"),
+            status_labels={str(k): str(v) for k, v in labels.items()},
+        )
 
 
 def _read_structure(

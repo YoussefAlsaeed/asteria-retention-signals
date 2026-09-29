@@ -52,6 +52,8 @@ class SourceObservation:
 class ParsedPayload:
     observations: list[SourceObservation]
     source_updated: str | None
+    # Provider's own meaning of each status code, e.g. {"p": "provisional"}.
+    status_labels: dict[str, str] = field(default_factory=dict)
 
 
 class SourceAdapter(Protocol):

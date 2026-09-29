@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Retention signals · Asteria Consumer Products</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to dashboard</a>
+
+  <header class="topbar">
+    <div class="wrap">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">AP</span> Asteria Consumer Products</div>
+      <div class="top-meta">
+        <span class="as-of-meta">Workforce data as of <span id="as-of">…</span></span>
+        <button type="button" class="btn-ghost" id="theme-toggle" aria-pressed="false">Dark theme</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="bar" aria-label="Dashboard">
+    <div class="wrap">
+      <div class="nav-links">
+        <a href="#status">Status</a>
+        <a href="#understand">Understand</a>
+        <a href="#challenge">Challenge</a>
+        <a href="#trust">Trust</a>
+      </div>
+      <form class="filters" id="filters" aria-label="Filters">
+        <label>Objective <select id="f-objective" name="objective"></select></label>
+        <label>Country <select id="f-country" name="country"></select></label>
+        <label><span id="segment-label">Business unit</span> <select id="f-segment" name="segment"></select></label>
+        <label>Period <select id="f-grain" name="grain">
+          <option value="year">Year</option>
+          <option value="quarter">Quarter</option>
+          <option value="month">Month</option>
+        </select></label>
+        <label>Definition <select id="f-variant" name="variant"></select></label>
+        <label>External signal <select id="f-signal" name="signal"></select></label>
+      </form>
+    </div>
+  </nav>
+
+  <main id="main" class="wrap" aria-busy="true">
+    <section class="hero" aria-labelledby="page-title">
+      <p class="eyebrow">Retention insight product</p>
+      <h1 id="page-title">Retention signals</h1>
+      <p class="hero-lead">How Asteria performs against its three workforce-retention objectives, and whether
+        external labour-market and macroeconomic conditions add useful context, with what can and cannot be concluded.</p>
+      <div class="pill-row" aria-label="Scope">
+        <span class="pill"><span class="pill-dot"></span>6 operating countries</span>
+        <span class="pill"><span class="pill-dot"></span>3 retention objectives</span>
+        <span class="pill"><span class="pill-dot"></span>5 external signals, 2 providers</span>
+        <span class="pill"><span class="pill-dot"></span>Synthetic workforce data</span>
+      </div>
+    </section>
+
+    <div class="callout banner" id="banner" role="alert" hidden>
+      <span class="callout-mark" aria-hidden="true">!</span>
+      <div class="banner-body">
+        <span id="banner-text"></span>
+        <button type="button" class="btn" id="banner-retry">Retry</button>
+      </div>
+    </div>
+
+    <section class="section" id="status" aria-labelledby="h-status">
+      <div class="section-head">
+        <span class="section-number" aria-hidden="true">01</span>
+        <div class="section-title">
+          <p class="eyebrow">Objective status</p>
+          <h2 id="h-status">Where each objective stands</h2>
+          <p class="lede">Latest measured period for the selected country and business unit. Periods whose
+            observation window has not finished are pending, never counted as retained.</p>
+        </div>
+      </div>
+      <div class="tiles" id="tiles"></div>
+    </section>
+
+    <section class="section" id="understand" aria-labelledby="h-understand">
+      <div class="section-head">
+        <span class="section-number" aria-hidden="true">02</span>
+        <div class="section-title">
+          <p class="eyebrow">Understand</p>
+          <h2 id="h-understand">Trends alongside external signals</h2>
+          <p class="lede">The selected objective over time, next to the selected signal as it was known at the
+            time. Two charts on purpose: they have different units, so they never share an axis.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <figure class="card" id="fig-trend">
+          <figcaption>
+            <h3 id="trend-title">Objective trend</h3>
+            <p id="trend-sub"></p>
+          </figcaption>
+          <ul class="legend" id="trend-legend"></ul>
+          <div class="chart" id="trend-chart"></div>
+          <p class="note" id="trend-note"></p>
+          <details class="table-view"><summary>Show data table</summary>
+            <div class="table-scroll" id="trend-table" tabindex="0" role="region" aria-label="Objective trend data"></div></details>
+        </figure>
+        <figure class="card" id="fig-signal">
+          <figcaption>
+            <h3 id="signal-title">External signal</h3>
+            <p id="signal-sub"></p>
+          </figcaption>
+          <ul class="legend" id="signal-legend"></ul>
+          <div class="chart" id="signal-chart"></div>
+          <p class="note" id="signal-note"></p>
+          <details class="table-view"><summary>Show data table</summary>
+            <div class="table-scroll" id="signal-table" tabindex="0" role="region" aria-label="External signal data"></div></details>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="challenge" aria-labelledby="h-challenge">
+      <div class="section-head">
+        <span class="section-number" aria-hidden="true">03</span>
+        <div class="section-title">
+          <p class="eyebrow">Challenge</p>
+          <h2 id="h-challenge">Does the objective move with the signal?</h2>
+          <p class="lede">Each dot is one country-quarter; larger dots contain more people. The table tests every
+            signal properly, comparing each country only with itself.</p>
+        </div>
+      </div>
+      <div class="grid-challenge">
+        <figure class="card" id="fig-scatter">
+          <figcaption>
+            <h3 id="scatter-title">Outcome against signal</h3>
+            <p id="scatter-sub"></p>
+          </figcaption>
+          <ul class="legend" id="scatter-legend"></ul>
+          <div class="chart" id="scatter-chart"></div>
+          <p class="note">Small dots at 0% or 100% are quarters with only a handful of people; the model weights
+            every person equally, so they do not drive the result.</p>
+          <details class="table-view"><summary>Show data table</summary>
+            <div class="table-scroll" id="scatter-table" tabindex="0" role="region" aria-label="Country-quarter data"></div></details>
+        </figure>
+        <div class="card">
+          <h3>Is there an association?</h3>
+          <p class="note" id="assoc-lede"></p>
+          <div class="table-wrap" style="margin-top:.75rem"><div class="table-scroll" id="assoc-table" tabindex="0" role="region" aria-label="Association tests"></div></div>
+          <div class="callout teal">
+            <span class="callout-mark" aria-hidden="true">i</span>
+            <div id="assoc-verdict"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="trust" aria-labelledby="h-trust">
+      <div class="section-head">
+        <span class="section-number" aria-hidden="true">04</span>
+        <div class="section-title">
+          <p class="eyebrow">Trust</p>
+          <h2 id="h-trust">Freshness, quality, sources, and method</h2>
+          <p class="lede">How fresh and complete the inputs are, what was excluded and why, where the data comes
+            from, and how every number is defined.</p>
+        </div>
+      </div>
+      <div class="grid-trust">
+        <div class="stack">
+          <div class="card">
+            <h3>External data freshness and coverage</h3>
+            <div class="table-wrap" style="margin-top:.6rem"><div class="table-scroll" id="freshness-table" tabindex="0" role="region" aria-label="External data freshness"></div></div>
+          </div>
+          <div class="card teal">
+            <h3>Sources and licences</h3>
+            <ul class="providers" id="providers"></ul>
+            <p class="note">API reference: <a href="/docs">/docs</a>.</p>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Workforce data quality</h3>
+          <p class="note" id="workforce-counts"></p>
+          <div class="table-wrap" style="margin-top:.6rem"><div class="table-scroll" id="quality-table" tabindex="0" role="region" aria-label="Workforce quality rules"></div></div>
+        </div>
+        <div class="card teal span-all">
+          <h3>Definitions and method</h3>
+          <dl class="defs" id="definitions"></dl>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site wrap">
+    <div class="footer-line">
+      <strong>Asteria Consumer Products is fictional.</strong>
+      Sources: Eurostat; World Bank, World Development Indicators (both CC BY 4.0). All workforce data is synthetic.
+    </div>
+  </footer>
+  <div id="live" class="visually-hidden" aria-live="polite"></div>
+</body>
+</html>

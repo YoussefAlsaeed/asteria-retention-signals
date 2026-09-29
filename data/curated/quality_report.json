@@ -1,0 +1,173 @@
+{
+  "workforce_source": "employee_lifecycle_events.csv",
+  "workforce_source_sha256": "9397a896d3111f178efa10206cadff956295e69bf599639ade01c98aece90b3e",
+  "workforce_rows_read": 2407,
+  "employees": 2400,
+  "measurable": 2390,
+  "in_country_scope": 2381,
+  "external_values": 2456,
+  "rules": [
+    {
+      "rule_id": "WF_EXACT_DUPLICATE",
+      "domain": "workforce",
+      "severity": "corrected",
+      "description": "Row identical to an earlier row on every column; removed.",
+      "rows_affected": 7
+    },
+    {
+      "rule_id": "WF_ID_SUPERSEDED",
+      "domain": "workforce",
+      "severity": "corrected",
+      "description": "Older version of an employee_id with conflicting values; latest record_updated_at kept.",
+      "rows_affected": 0
+    },
+    {
+      "rule_id": "WF_COUNTRY_ALIAS",
+      "domain": "workforce",
+      "severity": "corrected",
+      "description": "Non-ISO country code mapped to its canonical code (EL to GR, ROM to RO).",
+      "rows_affected": 8
+    },
+    {
+      "rule_id": "WF_COUNTRY_MISSING",
+      "domain": "workforce",
+      "severity": "exclude_country",
+      "description": "Blank country_code; cannot be joined to country signals.",
+      "rows_affected": 9
+    },
+    {
+      "rule_id": "WF_COUNTRY_UNKNOWN",
+      "domain": "workforce",
+      "severity": "exclude_country",
+      "description": "country_code not in the configured operating countries.",
+      "rows_affected": 0
+    },
+    {
+      "rule_id": "WF_CAREER_LEVEL_ALIAS",
+      "domain": "workforce",
+      "severity": "corrected",
+      "description": "Career level label mapped by a configured alias (Sr Mgmt to Senior Leader).",
+      "rows_affected": 10
+    },
+    {
+      "rule_id": "WF_CATEGORY_UNKNOWN",
+      "domain": "workforce",
+      "severity": "warn",
+      "description": "Business unit, career level, employment type, termination type or source system outside the allowed values.",
+      "rows_affected": 0
+    },
+    {
+      "rule_id": "WF_DATE_UNPARSEABLE",
+      "domain": "workforce",
+      "severity": "exclude",
+      "description": "hire_date or termination_date present but not a valid ISO date.",
+      "rows_affected": 0
+    },
+    {
+      "rule_id": "WF_HIRE_DATE_MISSING",
+      "domain": "workforce",
+      "severity": "exclude",
+      "description": "Blank hire_date; the employee cannot be placed in any cohort.",
+      "rows_affected": 5
+    },
+    {
+      "rule_id": "WF_HIRE_AFTER_AS_OF",
+      "domain": "workforce",
+      "severity": "exclude",
+      "description": "hire_date after the as-of date.",
+      "rows_affected": 0
+    },
+    {
+      "rule_id": "WF_TERMINATION_BEFORE_HIRE",
+      "domain": "workforce",
+      "severity": "exclude",
+      "description": "termination_date earlier than hire_date; impossible tenure.",
+      "rows_affected": 5
+    },
+    {
+      "rule_id": "WF_TERMINATION_AFTER_AS_OF",
+      "domain": "workforce",
+      "severity": "warn",
+      "description": "termination_date after the as-of date; treated as active at the as-of date.",
+      "rows_affected": 0
+    },
+    {
+      "rule_id": "WF_TERMINATION_TYPE_MISSING",
+      "domain": "workforce",
+      "severity": "warn",
+      "description": "termination_date present but termination_type blank; counts as an exit, never as regretted.",
+      "rows_affected": 13
+    },
+    {
+      "rule_id": "WF_TYPE_WITHOUT_DATE",
+      "domain": "workforce",
+      "severity": "warn",
+      "description": "termination_type present but termination_date blank; treated as active.",
+      "rows_affected": 0
+    },
+    {
+      "rule_id": "WF_REGRETTED_UNKNOWN",
+      "domain": "workforce",
+      "severity": "warn",
+      "description": "Voluntary exit with blank regretted_exit; unknown, not false.",
+      "rows_affected": 2
+    },
+    {
+      "rule_id": "WF_REGRETTED_NOT_VOLUNTARY",
+      "domain": "workforce",
+      "severity": "warn",
+      "description": "regretted_exit = true on a non-voluntary exit.",
+      "rows_affected": 0
+    },
+    {
+      "rule_id": "WF_EOC_ON_PERMANENT",
+      "domain": "workforce",
+      "severity": "warn",
+      "description": "End of Contract exit recorded for a Permanent employee.",
+      "rows_affected": 90
+    },
+    {
+      "rule_id": "EX_GEO_UNMAPPED",
+      "domain": "external",
+      "severity": "error",
+      "description": "Provider geo code not mapped to a canonical country.",
+      "rows_affected": 0
+    },
+    {
+      "rule_id": "EX_PERIOD_UNPARSEABLE",
+      "domain": "external",
+      "severity": "error",
+      "description": "Provider period string does not match the indicator's frequency.",
+      "rows_affected": 0
+    },
+    {
+      "rule_id": "EX_GRAIN_DUPLICATE",
+      "domain": "external",
+      "severity": "error",
+      "description": "More than one value for the same indicator, country, period and release.",
+      "rows_affected": 0
+    },
+    {
+      "rule_id": "EX_VALUE_MISSING",
+      "domain": "external",
+      "severity": "warn",
+      "description": "Provider returned a status flag but no value.",
+      "rows_affected": 0
+    },
+    {
+      "rule_id": "EX_PERIOD_GAP",
+      "domain": "external",
+      "severity": "warn",
+      "description": "Period missing inside a series' own first-to-last range.",
+      "rows_affected": 1
+    },
+    {
+      "rule_id": "EX_STATUS_FLAGGED",
+      "domain": "external",
+      "severity": "warn",
+      "description": "Value carries a provider status flag (e.g. provisional, estimated, break).",
+      "rows_affected": 71
+    }
+  ],
+  "missing_indicators": []
+}

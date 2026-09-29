@@ -130,6 +130,8 @@ Also: submit as a public repository, or grant reviewers private access, by the r
 ## Repository conventions
 
 - Layout follows the brief's suggested shape: `README · docs/ · src/ · tests/ · data/raw-or-fixtures/ · data/curated/ · dashboard/ · presentation/ · AI_USAGE.md`, plus `config/`.
-- Commands: `uv sync`, `uv run pytest`, `uv run ruff check`, `uv run mypy`, `uv run asteria ingest` (replay, offline), `uv run asteria ingest --mode live`.
+- Commands: `uv sync`, `uv run pytest`, `uv run ruff check`, `uv run mypy`, `uv run asteria run` (core workflow), `uv run asteria ingest [--mode live]`, `uv run asteria curate`, `uv run asteria analyse`, `uv run asteria serve`.
+- UI tests need `uv run playwright install chromium`; they include an axe accessibility audit that must stay free of serious violations.
+- Code must stay Python 3.11 compatible (no `def f[T]`, no `type X = ...`); verify with the 3.11 test command in the README.
 - Never commit or push unless the human asks.
 - Git: commit as Youssef Alsaeed <yousefalsaeed2002@gmail.com>; push to `YoussefAlsaeed/asteria-retention-signals` (private). This repo's credential helper uses `gh auth git-credential`.

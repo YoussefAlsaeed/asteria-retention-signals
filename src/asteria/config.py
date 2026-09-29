@@ -5,9 +5,10 @@ Invalid configuration fails at load time with the file and field named, never mi
 
 from __future__ import annotations
 
+from datetime import date
 from functools import cached_property
 from pathlib import Path
-from typing import Literal
+from typing import Literal, TypeVar
 
 import yaml
 from pydantic import BaseModel, ConfigDict, ValidationError, model_validator
@@ -18,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[2]
 Frequency = Literal["M", "Q", "A"]
 Lens = Literal["labour_supply", "labour_demand", "cost_of_living", "economic_cycle"]
 Mode = Literal["live", "replay"]
+M = TypeVar("M", bound=BaseModel)
 
 
 class ConfigError(Exception):
@@ -91,6 +93,66 @@ class CountryCatalogue(_Frozen):
         return mapping
 
 
+class WorkforceAllowed(_Frozen):
+    business_unit: list[str]
+    career_level: list[str]
+    employment_type: list[str]
+    termination_type: list[str]
+    source_system: list[str]
+
+
+class WorkforceConfig(_Frozen):
+    source_file: Path
+    as_of_date: date
+    allowed: WorkforceAllowed
+    career_level_aliases: dict[str, str]
+
+    @model_validator(mode="after")
+    def _aliases_point_to_allowed_levels(self) -> WorkforceConfig:
+        bad = sorted(set(self.career_level_aliases.values()) - set(self.allowed.career_level))
+        if bad:
+            raise ValueError(f"career_level_aliases map to levels not in allowed: {bad}")
+        return self
+
+    def source_path(self, root: Path = ROOT) -> Path:
+        return self.source_file if self.source_file.is_absolute() else root / self.source_file
+
+
+class ObjectiveRuleConfig(_Frozen):
+    measure: Literal["cohort_retention", "trailing_regretted_turnover"]
+    months: int
+    levels: list[str] | None = None
+    sensitivity_levels: list[str] | None = None
+
+
+class SignalConfig(_Frozen):
+    indicator: str
+    lag_days: int
+    release: str | None = None
+
+
+class AnalysisConfig(_Frozen):
+    objectives_file: Path
+    reporting_start: str
+    min_sample: int
+    objectives: dict[str, ObjectiveRuleConfig]
+    segment: Literal["business_unit", "employment_type", "career_level", "job_family"]
+    signals: list[SignalConfig]
+
+    @model_validator(mode="after")
+    def _check(self) -> AnalysisConfig:
+        ids = [s.indicator for s in self.signals]
+        if len(ids) != len(set(ids)):
+            raise ValueError("each signal indicator may appear once")
+        if any(s.lag_days < 0 for s in self.signals):
+            raise ValueError("lag_days cannot be negative")
+        return self
+
+    def objectives_path(self, root: Path = ROOT) -> Path:
+        path = self.objectives_file
+        return path if path.is_absolute() else root / path
+
+
 class Settings(BaseSettings):
     """Runtime settings; override with ASTERIA_* environment variables."""
 
@@ -110,27 +172,41 @@ class Settings(BaseSettings):
     def runs_dir(self) -> Path:
         return self.data_dir / "runs"
 
+    @property
+    def curated_dir(self) -> Path:
+        return self.data_dir / "curated"
 
-def _load_yaml(path: Path) -> object:
+    dashboard_dir: Path = ROOT / "dashboard"
+
+
+def _load_model(config_dir: Path, filename: str, model: type[M]) -> M:
+    path = config_dir / filename
     try:
-        return yaml.safe_load(path.read_text(encoding="utf-8"))
+        raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:
         raise ConfigError(f"config file not found: {path}") from exc
     except yaml.YAMLError as exc:
         raise ConfigError(f"config file is not valid YAML: {path}: {exc}") from exc
+    try:
+        return model.model_validate(raw)
+    except ValidationError as exc:
+        raise ConfigError(f"invalid {filename}:\n{exc}") from exc
 
 
 def load_sources(config_dir: Path) -> SourceCatalogue:
-    path = config_dir / "sources.yaml"
-    try:
-        return SourceCatalogue.model_validate(_load_yaml(path))
-    except ValidationError as exc:
-        raise ConfigError(f"invalid {path.name}:\n{exc}") from exc
+    return _load_model(config_dir, "sources.yaml", SourceCatalogue)
 
 
 def load_countries(config_dir: Path) -> CountryCatalogue:
-    path = config_dir / "countries.yaml"
-    try:
-        return CountryCatalogue.model_validate(_load_yaml(path))
-    except ValidationError as exc:
-        raise ConfigError(f"invalid {path.name}:\n{exc}") from exc
+    return _load_model(config_dir, "countries.yaml", CountryCatalogue)
+
+
+def load_workforce(config_dir: Path) -> WorkforceConfig:
+    return _load_model(config_dir, "workforce.yaml", WorkforceConfig)
+
+
+def load_analysis(config_dir: Path, catalogue: SourceCatalogue) -> AnalysisConfig:
+    config = _load_model(config_dir, "analysis.yaml", AnalysisConfig)
+    for signal in config.signals:
+        catalogue.indicator(signal.indicator)  # unknown indicator -> ConfigError
+    return config

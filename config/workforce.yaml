@@ -1,0 +1,17 @@
+# Workforce curation rules. Every correction applied to the starter data is declared here
+# and reported in data/curated/quality_report.md; nothing is corrected silently.
+
+source_file: data/raw-or-fixtures/starter/employee_lifecycle_events.csv
+as_of_date: "2025-12-31"
+
+# Accepted values after canonicalisation. Anything else is flagged, not guessed.
+allowed:
+  business_unit: [Supply Chain, Sales, Finance, Digital]
+  career_level: [Individual Contributor, Manager, Senior Leader]
+  employment_type: [Permanent, Fixed Term]
+  termination_type: [Voluntary, Involuntary, End of Contract]
+  source_system: [HCM_A, HCM_B]
+
+# Assumption pending clarification question 1: "Sr Mgmt" is another label for Senior Leader.
+career_level_aliases:
+  Sr Mgmt: Senior Leader

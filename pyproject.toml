@@ -16,6 +16,7 @@ dependencies = [
     "typer>=0.12",
     "fastapi>=0.115",
     "uvicorn>=0.30",
+    "statsmodels>=0.15.0",
 ]
 
 [project.scripts]
@@ -27,6 +28,9 @@ dev = [
     "ruff>=0.6",
     "mypy>=1.11",
     "types-pyyaml>=6.0.12.20260906",
+    "pandas-stubs>=3.0.5.260914",
+    "playwright>=1.63.0",
+    "axe-playwright-python>=0.1.8",
 ]
 
 [build-system]
@@ -47,8 +51,18 @@ target-version = "py311"
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM"]
 
+[tool.ruff.lint.per-file-ignores]
+# One CSV row per line reads better than wrapped fixtures.
+"tests/curate/test_workforce_curation.py" = ["E501"]
+"tests/analytics/test_retention_sql.py" = ["E501"]
+
 [tool.mypy]
-python_version = "3.11"
+# Checked with the project interpreter; 3.11 support is verified by running the tests on 3.11.
 strict = true
 packages = ["asteria"]
 mypy_path = "src"
+
+[[tool.mypy.overrides]]
+# statsmodels ships no type information.
+module = ["statsmodels", "statsmodels.*"]
+ignore_missing_imports = true

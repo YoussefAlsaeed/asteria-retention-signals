@@ -1,0 +1,43 @@
+# Metric definitions and temporal-alignment rules.
+# Targets and directions are read from the starter objectives file, never restated here.
+# Every choice marked "assumption" is a default from docs/clarification_questions.md.
+
+objectives_file: data/raw-or-fixtures/starter/retention_objectives.csv
+
+# First cohort month / first reporting month (objectives are effective from 2021-01-01).
+reporting_start: "2021-01"
+
+# A slice with fewer eligible people than this gets status "insufficient_sample".
+min_sample: 30
+
+objectives:
+  NEW_HIRE_6M:
+    measure: cohort_retention
+    months: 6              # assumption: calendar months; retained if employed through the anniversary
+    levels: null           # all career levels
+  SENIOR_HIRE_12M:
+    measure: cohort_retention
+    months: 12
+    levels: [Senior Leader]                     # assumption (Q1); Sr Mgmt is mapped in workforce.yaml
+    sensitivity_levels: [Senior Leader, Manager]
+  REGRETTED_TURNOVER_12M:
+    measure: trailing_regretted_turnover
+    months: 12             # assumption (Q4): mean of the 12 month-end headcounts in the window
+
+# Workforce segment offered as a filter (brief: at least one).
+segment: business_unit
+
+# As-of rule: a value is usable from period_end + lag_days. Lags are conservative and were
+# spot-checked against official release dates 2021-2026 (docs/source_register.md).
+signals:
+  - indicator: unemployment_rate
+    lag_days: 62           # releases 30-33 days after month end: ~4 weeks of safety margin
+  - indicator: job_vacancy_rate
+    lag_days: 90           # releases 75-79 days after quarter end
+  - indicator: hicp_inflation_first_release
+    release: FIN           # value as first released: no later revisions leak in
+    lag_days: 25           # releases 17-24 days after month end; January latest (weights update)
+  - indicator: economic_sentiment
+    lag_days: 10           # usually before month end, but December is published 5-8 January
+  - indicator: gdp_growth
+    lag_days: 200          # new year enters the World Bank WDI on 1 July (182 days)
