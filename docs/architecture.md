@@ -1,6 +1,6 @@
 # Architecture: local build and production mapping
 
-The assessment runs locally with free tools. This page shows how each local part maps to an Azure production setup (ADF-style orchestration, a Databricks lakehouse, Power BI). The production column is a **design proposal**, not something that was built.
+The assessment runs locally with free tools. This page shows how each local part maps to an Azure production setup (ADF-style orchestration, a Databricks lakehouse, Power BI). The production column is a **design proposal**, not something that was built. It was drafted with the AI agent and has not been validated against a real Azure environment.
 
 ## Local architecture (what exists)
 

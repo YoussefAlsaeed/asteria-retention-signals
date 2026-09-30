@@ -5,7 +5,7 @@ const COUNTRY_SLOT = { GR: "--s1", RO: "--s2", PL: "--s3", IT: "--s4", IE: "--s5
 const STATUS = {
   met: { icon: "✓", label: "Met" },
   not_met: { icon: "✕", label: "Not met" },
-  pending: { icon: "…", label: "Pending" },
+  pending: { icon: "…", label: "Not yet observable" },
   insufficient_sample: { icon: "?", label: "Too few people" },
 };
 const CONFIDENCE = { clear: "Clear: the 95% interval is entirely on one side of the target",
@@ -85,10 +85,8 @@ function readUrl() {
   state.country = q.get("country") || "ALL";
   state.segment = q.get("segment") || "All";
   state.grain = q.get("grain") || "year";
-  state.variant = q.get("variant") || "main";
   state.signal = q.get("signal") || meta.signals[0].indicator_id;
   if (!meta.objectives.some((o) => o.objective_id === state.objective)) state.objective = meta.objectives[0].objective_id;
-  if (!objective().variants.includes(state.variant)) state.variant = "main";
 }
 
 function writeUrl() {
@@ -102,10 +100,9 @@ function buildFilters() {
   $("segment-label").textContent = meta.segment_name.replace("_", " ").replace(/^./, (c) => c.toUpperCase());
   $("f-signal").replaceChildren(...meta.signals.map((s) => option(s.indicator_id, s.title.split(",")[0])));
   syncFilters();
-  for (const id of ["objective", "country", "segment", "grain", "variant", "signal"]) {
+  for (const id of ["objective", "country", "segment", "grain", "signal"]) {
     $(`f-${id}`).addEventListener("change", (e) => {
       state[id] = e.target.value;
-      if (id === "objective" && !objective().variants.includes(state.variant)) state.variant = "main";
       syncFilters();
       refresh();
     });
@@ -113,10 +110,7 @@ function buildFilters() {
 }
 
 function syncFilters() {
-  const variantLabels = { main: "Main (assumption)", sensitivity_manager: "Senior + Manager",
-    upper_bound_unknown: "Unknown regrets counted" };
-  $("f-variant").replaceChildren(...objective().variants.map((v) => option(v, variantLabels[v] || v)));
-  for (const id of ["objective", "country", "segment", "grain", "variant", "signal"]) $(`f-${id}`).value = state[id];
+  for (const id of ["objective", "country", "segment", "grain", "signal"]) $(`f-${id}`).value = state[id];
   writeUrl();
 }
 
@@ -127,7 +121,7 @@ async function refresh() {
   try {
     const [tiles, series, signalSeries, assoc, cells] = await Promise.all([
       api(`status?country=${c}&segment=${encodeURIComponent(s)}&grain=${state.grain}`),
-      api(`objectives/${o}/measures?country=${c}&segment=${encodeURIComponent(s)}&grain=${state.grain}&variant=${state.variant}`),
+      api(`objectives/${o}/measures?country=${c}&segment=${encodeURIComponent(s)}&grain=${state.grain}&variant=main`),
       api(`signals/${state.signal}?country=${c}`),
       api(`objectives/${o}/associations`),
       api(`objectives/${o}/associations/${state.signal}/cells`),
@@ -176,7 +170,7 @@ function drawTiles(rows) {
     const cohort = o.measure === "cohort_retention";
     const who = cohort ? (o.objective_id === "SENIOR_HIRE_12M" ? "senior hires" : "hires") : "people in the average workforce";
     const tooFew = r.status === "insufficient_sample";
-    const pending = r.pending_periods ? ` · ${r.pending_periods} later period(s) pending` : "";
+    const pending = r.pending_periods ? ` · ${r.pending_periods} later period(s) not yet observable` : "";
     const details = tooFew
       ? [`Not judged: only ${num(r.denominator)} ${who} in this slice, and ${meta.min_sample} are needed. ${smallSampleHint()}`.trim(),
         `The rate is shown for reference only${pending}.`]
@@ -223,7 +217,7 @@ function findingCard(n, tag, v, title, metric, sub, text, preset, anchor) {
 }
 
 function applyPreset(preset, anchor) {
-  Object.assign(state, { country: "ALL", segment: "All", grain: "year", variant: "main" }, preset);
+  Object.assign(state, { country: "ALL", segment: "All", grain: "year" }, preset);
   syncFilters();
   refresh();
   const target = $(anchor);
@@ -242,17 +236,13 @@ function drawFindings(f) {
   const cards = [];
 
   const senior = pooled("SENIOR_HIRE_12M");
-  const seniorWide = pooled("SENIOR_HIRE_12M", "sensitivity_manager");
   if (senior) {
     const o = spec("SENIOR_HIRE_12M");
     const below = senior.yearly_rates.every((r) => r < o.target);
-    const wide = seniorWide
-      ? ` Counting Managers as senior: ${pct(seniorWide.rate)}, ${verdict(o, seniorWide.rate, seniorWide.ci_low, seniorWide.ci_high).label.toLowerCase()}.`
-      : "";
     cards.push(findingCard(1, "senior hires kept 12 months", verdict(o, senior.rate, senior.ci_low, senior.ci_high),
       targetLabel(o), pct(senior.rate),
       `95% interval ${pct(senior.ci_low)} – ${pct(senior.ci_high)} · ${num(senior.denominator)} ${years(senior)}`,
-      `${below ? "Below target in every year" : "Mixed across years"} (${senior.yearly_rates.map((r) => pct(r)).join(", ")}).${wide}`,
+      `${below ? "Below target in every year" : "Mixed across years"} (${senior.yearly_rates.map((r) => pct(r)).join(", ")}).`,
       { objective: "SENIOR_HIRE_12M" }, "understand"));
   }
 
@@ -308,8 +298,7 @@ function drawFindings(f) {
 function drawTrend(series) {
   const o = objective();
   $("trend-title").textContent = o.name;
-  $("trend-sub").textContent = `${countryName(state.country)} · ${state.segment} · by ${state.grain}` +
-    (state.variant === "main" ? "" : ` · definition: ${$("f-variant").selectedOptions[0].textContent}`);
+  $("trend-sub").textContent = `${countryName(state.country)} · ${state.segment} · by ${state.grain}`;
   const chart = $("trend-chart");
   const pts = series.points;
   const measured = pts.filter((p) => p.rate !== null);
@@ -325,7 +314,7 @@ function drawTrend(series) {
   if (!pts.length) {
     chart.replaceChildren(h("div", { class: "empty", text: "No hires in this slice. Try a wider period or another business unit." }));
   } else if (!measured.length) {
-    chart.replaceChildren(h("div", { class: "empty", text: "Every period in this slice is still pending: its observation window has not finished." }));
+    chart.replaceChildren(h("div", { class: "empty", text: "Not yet observable: the observation window of every period in this slice is still open." }));
   } else {
     lineChart(chart, {
       ariaLabel: `${o.name}, ${countryName(state.country)}, by ${state.grain}. Latest ${pct(measured.at(-1).rate)} against ${targetLabel(o)}. Use arrow keys to read values.`,
@@ -336,7 +325,7 @@ function drawTrend(series) {
       band: true, yFormat: (v) => pct(v, 0), xFormat: (d) => periodLabel(d.toISOString().slice(0, 10), state.grain, o),
     });
   }
-  $("trend-note").textContent = [pending ? `${pending} period(s) pending (not yet measurable).` : "",
+  $("trend-note").textContent = [pending ? `${pending} period(s) not yet observable (window still open).` : "",
     small ? `${small} period(s) with fewer than ${meta.min_sample} people: shown hollow, no status judged.` : ""].join(" ").trim();
   $("trend-table").replaceChildren(dataTable([
     { key: "period_start", label: "Period", format: (v) => periodLabel(v, state.grain, o) },

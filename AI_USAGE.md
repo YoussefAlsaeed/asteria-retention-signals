@@ -52,6 +52,18 @@ Claude Code (VS Code extension), model Claude Opus 5.5.
 
 19. **Scope of the external-signal test (human question).** The human asked why signals are tested per objective rather than against all leavers. The agent explained two things: leavers-only analysis has no comparison group, and different kinds of leaving can react to the economy in opposite directions. As an exploratory check (outside the pipeline) it pooled all exits. That first showed apparent links: unemployment OR 1.20, q 0.012; vacancies OR 0.85, q 0.002. Both pointed the wrong way, and adding time since hire and year baselines removed most of them (voluntary exits: p 0.19–0.21). **Human decisions:** keep the official models as they are, with tenure documented as a limitation and next step, and leave the all-leavers check out of the analysis. The human then asked for plain-language explanations in the deck: two new slides ("Reading the numbers" and "The economic question, in plain words") and "In plain words" lines on the technical slides; 17 slides, with no overflow on any.
 
+20. **Clarification answers received.** All three confirmed the implemented definitions: Senior Leader only with Sr Mgmt normalised; hires from 2021 included only when hire + N months ≤ 31 Dec 2025; mean of the 12 month-end headcounts. The agent checked the one wording difference, a per-person maturity rule vs the implemented per-cohort rule, on the real data: 0 disagreements (1,813 and 266 people), because the data ends on a month end. A test now pins this. No number changed. The label "Pending" was renamed to the answer's term, "Not yet observable"; the internal status code is unchanged. Docs, deck and diagram now say "confirmed" instead of "assumption".
+
+21. **Dashboard shows the confirmed definition only (human decision).** With the definitions confirmed, the human removed the Definition filter. The dashboard now always shows the main definition, and Finding 1's card no longer quotes the Senior + Manager figure. The sensitivity variants remain in the analytical tables and the written findings as robustness evidence. The agent's edit left a dangling `+` that broke the page. The browser tests caught it (14 failures). It had slipped past `node --check` because the file was checked as a classic script, not as the ES module the browser loads; checks now use `.mjs`.
+
+22. **API package structure (human request).** The human asked for the API to be organised into packages rather than one file. The agent split it: `routers/` (one module per resource), `repository/` (a base connection plus objective, signal and trust query groups, combined in one `Repository`), `schemas/` (models grouped the same way), `services/` (meta, findings summary, method definitions), plus `dependencies`, `errors` and `middleware`. Validation moved into FastAPI dependencies (`ObjectiveDep`, `CountryDep`, and so on), which removed every `# type: ignore` in the routes. The significance threshold is now a named constant. **Verification:** the OpenAPI surface is identical (the same 9 endpoints and parameters); all 129 tests pass on Python 3.13 and 3.11; strict mypy and ruff are clean; no module is longer than 96 lines (the old `app.py` was 289).
+
+23. **Person-months slide (human request).** After an explanation of person-months, the human asked for it in the deck. The agent added an optional slide with one real employee's rows (May excluded, June–October included), the 65,184 / 217 / 0.33% totals, and the one-row-per-hire contrast for the hire targets. 18 slides, with no overflow on any; PDF rebuilt.
+
+24. **Production-mapping slide removed (human decision).** The human removed the ADF / Databricks / Power BI slide from the deck. It was agent-drafted, and the human had not had time to research it enough to present it. The brief's production-architecture requirement is still met by `docs/architecture.md`, which now states that it is an agent-drafted proposal, not validated against a real Azure environment. Deck: 17 slides.
+
+25. **"Inside the model" slide (human-written explanation).** The human wrote a plain-language, step-by-step account of the logistic regression (inputs → b → odds ratio → 95% range → p → q) and asked for it in the deck. The agent laid it out as an optional slide after person-months and kept the human's full wording in the speaker notes. **Changed:** "18% lower odds" now says it is per one step of the signal (5.78 sentiment points), because the model scales the signal by its within-country SD. **Verification:** the numbers were checked against the association output (b −0.2015, OR 0.82, 0.68–0.99, p 0.035, q 0.53); 18 slides, with no overflow; PDF rebuilt.
+
 ## Suggestions rejected or changed
 
 | Agent suggestion | Outcome |
@@ -76,7 +88,7 @@ Claude Code (VS Code extension), model Claude Opus 5.5.
 
 ## Remaining risks
 
-- Metric definitions follow default assumptions; clarification answers could change the senior scope and the turnover denominator (both switchable in `config/analysis.yaml`).
+- Metric definitions are confirmed by the clarification answers (received 2026-09-30).
 - Publication lags are estimated from one observation date and applied to all history.
 - The workforce has no pre-2020 employees, so turnover trends mix real change with tenure composition.
 - `prc_hicp_fpd` release semantics (FIN vs FLS) inferred from data, not yet confirmed in Eurostat metadata.

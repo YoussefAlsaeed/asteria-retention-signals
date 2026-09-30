@@ -36,7 +36,6 @@ Every filter changes everything below it.
 | **Country**         | All countries, or one. "All countries" also includes the 9 people with no country.                                                                                              |
 | **Business unit**   | All, or one unit (Digital, Finance, Sales, Supply Chain)                                                                                                                        |
 | **Period**          | How hires are grouped: by year, quarter or month. For turnover, the 12-month window ending at that period.                                                                      |
-| **Definition**      | *Main* = our assumptions. *Senior + Manager* (senior target only) counts Managers as senior. *Unknown regrets counted* (turnover only) counts the 2 unclear exits as regretted. |
 | **External signal** | Which economic indicator the right-hand chart and the scatter show                                                                                                              |
 
 
@@ -75,8 +74,8 @@ The other messages you may see:
 
 | Message                                       | Meaning                                                                                                                                                               |
 | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **… Pending**                                 | The group's 6- or 12-month window hasn't finished by 31 Dec 2025. For example, 2025 hires can't yet be judged on 12-month retention. We never count them as "stayed". |
-| **No measured period for this selection yet** | Every period in the slice is pending or empty                                                                                                                         |
+| **… Not yet observable**                             | The group's 6- or 12-month window hasn't finished by 31 Dec 2025. For example, 2025 hires can't yet be judged on 12-month retention. We never count them as "stayed". |
+| **No measured period for this selection yet** | Every period in the slice is not yet observable, or empty                                                                                                                         |
 | **No hires in this slice**                    | Nobody matching the filters was hired                                                                                                                                 |
 
 
@@ -93,14 +92,14 @@ Using the senior card as an example:
 
 | Line on the card                                                | Meaning                                                      |
 | --------------------------------------------------------------- | ------------------------------------------------------------ |
-| "2024 hires · All countries"                                    | The latest period that can be judged. 2025 is still pending. |
+| "2024 hires · All countries"                                    | The latest period that can be judged. 2025 is not yet observable. |
 | **81.0%**                                                       | Share of 2024 senior hires still employed 12 months later    |
 | Target ≥ 90.0%                                                  | From the starter objectives file                             |
 | ✕ NOT MET                                                       | Verdict. The icon and word carry it, not just the colour.    |
 | "Clear: the 95% interval is entirely on one side of the target" | Even allowing for chance, it's below 90%                     |
 | "Too close to call: the 95% interval includes the target"       | Met or not met, but chance could flip it                     |
 | "95% interval 69.6% – 88.8% · 63 hires"                         | The plausible range, and how many people it's based on       |
-| "1 later period(s) pending"                                     | Newer periods exist but can't be judged yet                  |
+| "1 later period(s) not yet observable"                                     | Newer periods exist but can't be judged yet                  |
 
 
 
@@ -164,20 +163,7 @@ The Key findings panel shows the pooled numbers; each **Show me** button applies
 
 | Finding                                              | Set the filters to                                                          | What to show                                                                                                                                                                                                                                   |
 | ---------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1. Senior hires clearly miss 90%**                 | Objective **Senior**, Country **All**, Period **Year**, Definition **Main** | Trend: all four years (73.9, 78.9, 80.6, 81.0%) sit below the target line, **and so does the whole band**. Then switch Definition to **Senior + Manager**: still below. That's why the finding doesn't depend on the "who is senior" question. |
+| **1. Senior hires clearly miss 90%**                 | Objective **Senior**, Country **All**, Period **Year** | Trend: all four years (73.9, 78.9, 80.6, 81.0%) sit below the target line, **and so does the whole band**. The dashboard uses the confirmed definition (Senior Leader only); the written findings also show it would still be missed if Managers were counted. |
 | **2. New hires are on the line**                     | Objective **New-hire**, Country **All**, Period **Year**                    | The line hugs 86%, and **the band crosses the target line every year**. Status card: ✓ Met, "Too close to call". Switch Country to RO (lowest) or GR (highest): still too close to call either way.                                            |
 | **3. Turnover is within the limit but rose in 2025** | Objective **Regretted turnover**, Country **All**, Period **Year**          | Line well under 7.5% with a clear band; up-tick in 2025 (5.1%). Switch Country to **RO** (6.7%), IE or BG: those bands reach 7.5%, so they're the ones to watch.                                                                               |
 | **4. No link to the economy**                        | Any objective; Relationships panel                                            | The box under the table: "No signal is associated…". For the one hint, pick Objective **Regretted turnover** and Signal **Economic sentiment**: OR 0.82, but q 0.53, so not significant. The scatter shows no slope.                           |
-
-
-
-
-## 7. A 4-minute demo script
-
-1. **Key findings (30s).** "Three targets and one question about the economy. Senior retention is clearly missed; new hires are met but on the line; turnover is within its limit; and no economic signal lines up with leaving." Then use **Show me** on each card for steps 2–5.
-2. **Senior (60s).** Objective = Senior, Year. "Every year below 90%, and the whole uncertainty band is below it too. If we count Managers as senior, it's still missed, so this doesn't hinge on the open question."
-3. **New hires (45s).** "86.8% against 86%. The band crosses the target every year, so we'd call it *on the line*, not *safe*."
-4. **Turnover (30s).** "Well under 7.5%, but up in 2025; Romania is closest."
-5. **Economy (60s).** Relationships panel. "We tested five signals properly, comparing each country with itself and only using data that had been published. Nothing survives the correction for 15 tests. The honest answer is *no evidence of a link*, with only 57 senior leavers to learn from."
-6. **Trust (15s).** "Every exclusion is counted, every source is licensed, and every number is recomputed independently."
-

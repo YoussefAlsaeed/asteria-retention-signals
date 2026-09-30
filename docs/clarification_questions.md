@@ -10,6 +10,16 @@ One batch, sent once ([clarification_questions.pdf](clarification_questions.pdf)
 | 2 | **Cohort scope and maturity (`NEW_HIRE_6M`, `SENIOR_HIRE_12M`).** Are only hires from 2021-01-01 in scope (414 records were hired in 2020)? Should cohorts be monthly by hire date, reporting only cohorts whose full window has elapsed by 2025-12-31? | Monthly hire cohorts from 2021-01; only mature cohorts reported, immature shown as pending; 2020 hires excluded from cohorts but counted in headcount. |
 | 3 | **Regretted turnover denominator (`REGRETTED_TURNOVER_12M`).** Is average headcount the mean of the 12 month-end headcounts in the trailing window, or the average of opening and closing headcount? | Mean of the 12 month-end headcounts. Numerator: voluntary exits flagged regretted within the window. |
 
+## Answers received (2026-09-30)
+
+All three answers confirm the definitions already implemented; no number changed.
+
+| # | Answer | Effect |
+|---|---|---|
+| 1 | Senior Leader only; not Manager; normalise the 10 "Sr Mgmt" records to Senior Leader. | Matches the main definition. "Senior + Manager" stays as a clearly labelled sensitivity view only. |
+| 2 | Hires from 1 Jan 2021. Include a person only when hire date + 6 (or 12) months ≤ 31 Dec 2025. Monthly cohorts are acceptable; immature cohorts are shown as not yet observable (censored), never as failures or zero retention, and an immature cohort is not reported as complete. | Matches. The implemented rule is per monthly cohort; checked against the per-person rule: 0 disagreements (1,813 new hires, 266 senior hires), because the data ends on a month end. Dashboard label changed from "Pending" to "Not yet observable". |
+| 3 | Mean of the 12 month-end active headcounts in the trailing twelve-month window. | Matches the implemented denominator. |
+
 ## Not sent: documented assumptions
 
 Low impact on results (few rows) or resolvable by a stated rule. Each is recorded, applied consistently, and reported in the quality output.

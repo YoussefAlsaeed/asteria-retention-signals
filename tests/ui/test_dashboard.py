@@ -92,7 +92,7 @@ def test_status_is_never_colour_alone(page: Page, base_url: str) -> None:
         assert badge.locator(".icon").count() == 1
         # DOM text, as a screen reader gets it (CSS may display it in upper case)
         label = badge.locator("span:not(.icon)").text_content()
-        assert label in {"Met", "Not met", "Pending", "Too few people"}
+        assert label in {"Met", "Not met", "Not yet observable", "Too few people"}
 
 
 def test_filters_scope_the_view_and_are_kept_in_the_url(page: Page, base_url: str) -> None:
@@ -102,7 +102,6 @@ def test_filters_scope_the_view_and_are_kept_in_the_url(page: Page, base_url: st
     expect(page.locator("main")).to_have_attribute("aria-busy", "false")
     assert "objective=SENIOR_HIRE_12M" in page.url and "country=GR" in page.url
     expect(page.locator("#trend-chart svg")).to_have_attribute("aria-label", _contains("Greece"))
-    expect(page.locator("#f-variant option")).to_have_count(2)  # senior has a sensitivity variant
     page.reload()
     expect(page.locator("#f-country")).to_have_value("GR")
 
@@ -133,7 +132,7 @@ def test_pending_only_slice_explains_why(page: Page, base_url: str) -> None:
 
     page.route("**/api/objectives/*/measures*", pending)
     loaded(page, base_url)
-    expect(page.locator("#trend-chart .empty")).to_contain_text("still pending")
+    expect(page.locator("#trend-chart .empty")).to_contain_text("Not yet observable")
 
 
 def test_unreachable_api_shows_banner_and_retry_recovers(page: Page, base_url: str) -> None:

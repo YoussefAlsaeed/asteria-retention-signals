@@ -102,3 +102,21 @@ def test_every_model_fitted_and_is_corrected_for_multiple_tests(report: AnalyseR
     within = [a for a in report.associations if a.model == "within_country"]
     assert len(within) == 15  # 3 objectives x 5 signals
     assert all(a.odds_ratio is not None and a.q_value is not None for a in within)
+
+
+def test_cohort_maturity_equals_the_clarified_per_person_rule(
+    con: duckdb.DuckDBPyConnection,
+) -> None:
+    """Clarification Q2: include a hire only when hire date + N months <= 31 Dec 2025.
+
+    The pipeline decides maturity per monthly cohort; on this data (as-of = a month end)
+    both rules must select exactly the same people.
+    """
+    disagreements = con.execute(
+        """
+        SELECT count(*) FROM mart_cohort_members
+        WHERE cohort_mature <> ((hire_date + to_months(
+            CASE objective_id WHEN 'NEW_HIRE_6M' THEN 6 ELSE 12 END))::DATE <= DATE '2025-12-31')
+        """
+    ).fetchone()
+    assert disagreements == (0,)

@@ -73,6 +73,18 @@
   .explain div:nth-last-child(-n+2) { border-bottom: 0; }
   .qbox { background: var(--navy); color: #fff; border-radius: 14px; padding: 16px 20px; font-size: 20px; line-height: 1.4; }
   .qbox small { display: block; color: #89ddd5; font-size: 12px; font-weight: 820; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; }
+  .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .stepc { min-width: 0; }
+  .stepc { background: #fff; border: 1px solid var(--line); border-top: 4px solid var(--teal); border-radius: 12px; padding: 10px 12px; }
+  .stepc .k { display: block; white-space: nowrap; font-size: 10.5px; font-weight: 820; letter-spacing: .08em; text-transform: uppercase; color: var(--teal-dark); }
+  .stepc .v { white-space: nowrap; font-size: 23px; font-weight: 780; letter-spacing: -.02em; color: var(--ink); margin: 2px 0; }
+  .stepc p { margin: 0; font-size: 13px; color: var(--soft); line-height: 1.4; }
+  .stepc.q { border-top-color: var(--navy); background: #f5f8fa; }
+  .flow { font-size: 14px; color: var(--ink); background: #fff; border: 1px dashed #9fb3c0; border-radius: 12px; padding: 9px 14px; }
+  .narrowed { font-size: 19px; margin-top: 18px; }
+  .narrowed td { padding-top: 22px; padding-bottom: 22px; line-height: 1.45; }
+  .narrowed td:nth-child(1) { width: 25%; }
+  .narrowed td:nth-child(2) { white-space: nowrap; width: 9%; font-weight: 750; }
   .notes { display: none; }
   #notes { position: fixed; left: 0; right: 0; bottom: 0; max-height: 34vh; overflow: auto; background: #fff; color: var(--ink);
     padding: 14px 22px; font-size: 16px; line-height: 1.5; border-top: 4px solid var(--teal); display: none; }
@@ -83,6 +95,11 @@
     #stage { position: static; transform: none !important; width: 1280px; height: auto; }
     .slide { display: flex !important; position: relative; width: 1280px; height: 720px; page-break-after: always; break-after: page; }
     #notes, #hint { display: none !important; }
+    /* Flat colours for print: gradients and soft shadows make PDF viewers lag when scrolling. */
+    .slide { background-image: none; }
+    .title-slide { background: #0e3b4f; }
+    .pill { background: #26505f; border-color: #4f7482; }
+    img.shot { box-shadow: none; }
     @page { size: 1280px 720px; margin: 0; }
   }
 </style>
@@ -97,7 +114,7 @@
   <p>Asteria Consumer Products (fictional). How three retention targets are performing, and whether the economy adds useful context.</p>
   <div class="pills">
     <span class="pill">One command, runs offline</span><span class="pill">5 public signals, 2 providers</span>
-    <span class="pill">128 automated tests</span><span class="pill">Every number re-derived: 107 / 107</span>
+    <span class="pill">129 automated tests</span><span class="pill">Every number re-derived: 107 / 107</span>
   </div>
   <p style="margin-top:34px;font-size:16px;color:#cbd8e4">Youssef Alsaeed</p>
   <div class="notes">Opening (15s). One sentence on what this is: a small, defensible data product, not just a dashboard. Then go straight into how I narrowed the question.</div>
@@ -108,17 +125,13 @@
   <div class="top"><span class="section"><span class="n">1</span>Problem refinement and scope</span><span class="time">3 min</span></div>
   <h2>The question, narrowed</h2>
   <p class="lede">Decision supported: <strong>which retention target needs leadership attention, and does the economy explain it?</strong></p>
-  <table>
-    <tr><th>Target</th><th class="num">Goal</th><th>How I defined it</th><th>Open question → assumption</th></tr>
-    <tr><td><strong>New hires kept 6 months</strong></td><td class="num">≥ 86%</td><td>Hires grouped by month from Jan 2021; "lost" = left before the 6-month anniversary</td><td>Calendar months; unfinished groups are <em>pending</em>, never "retained"</td></tr>
-    <tr><td><strong>Senior hires kept 12 months</strong></td><td class="num">≥ 90%</td><td>Same rule, 12 months, Senior Leader only</td><td>Who is senior? → Senior Leader (+ "Sr Mgmt" alias); Managers as a sensitivity check</td></tr>
-    <tr><td><strong>Regretted turnover, trailing 12 months</strong></td><td class="num">≤ 7.5%</td><td>Regretted exits ÷ average of the 12 month-end headcounts</td><td>Denominator convention → mean of month-end headcounts</td></tr>
+  <table class="narrowed">
+    <tr><th>Target</th><th class="num">Goal</th><th>How I defined it</th></tr>
+    <tr><td><strong>New hires kept 6 months</strong></td><td class="num">≥ 86%</td><td>Hires grouped by month from Jan 2021; "lost" = left before the 6-month anniversary. Only counted once hire + 6 months ≤ 31 Dec 2025; otherwise <em>not yet observable</em>, never "retained"</td></tr>
+    <tr><td><strong>Senior hires kept 12 months</strong></td><td class="num">≥ 90%</td><td>Same rule over 12 months, Senior Leader only ("Sr Mgmt" normalised to it; Managers only as a sensitivity check)</td></tr>
+    <tr><td><strong>Regretted turnover, trailing 12 months</strong></td><td class="num">≤ 7.5%</td><td>Regretted exits ÷ mean of the 12 month-end active headcounts</td></tr>
   </table>
-  <div class="grid g2" style="margin-top:16px">
-    <div class="card teal"><h3>Clarification round</h3><p>10 candidate questions drafted, cut to the <strong>3 that can flip a result</strong>; the other 7 recorded as assumptions. Every assumption is a switch in <code>config/analysis.yaml</code>.</p></div>
-    <div class="card coral"><h3>Deliberately out of scope</h3><p>Forecasting, causal claims, individual-level drivers (pay, manager), per-country publication lags. <strong>Depth over surface area.</strong></p></div>
-  </div>
-  <div class="notes">(75s) The brief grades narrowing. The three targets each hide a definition choice; I asked only the three questions that could change a verdict and wrote defaults for the rest. Point out: senior finding holds under both definitions, so the open question doesn't block the conclusion.</div>
+  <div class="notes">(75s) The brief grades narrowing. Each target hides a definition choice: who is in the group, when the result can be judged, and what the denominator is. Unfinished groups are shown as not yet observable, never counted as retained. If asked: the three definitions were confirmed in the clarification round, and the senior finding holds with or without Managers.</div>
 </section>
 
 <!-- 3 ---------------------------------------------------------------- -->
@@ -132,15 +145,15 @@
       <tr><td>Exact duplicates</td><td class="num">7</td><td>Removed</td></tr>
       <tr><td>Country "EL" / "ROM"</td><td class="num">8</td><td>Mapped to GR / RO (EL is Eurostat's own code)</td></tr>
       <tr><td>Blank country</td><td class="num">9</td><td>Company-wide figures only</td></tr>
-      <tr><td>"Sr Mgmt" level</td><td class="num">10</td><td>Mapped to Senior Leader (assumption)</td></tr>
+      <tr><td>"Sr Mgmt" level</td><td class="num">10</td><td>Normalised to Senior Leader (confirmed)</td></tr>
       <tr><td>No hire date / left before hired</td><td class="num">5 + 5</td><td>Excluded from all measures</td></tr>
       <tr><td>Exit with no exit type</td><td class="num">13</td><td>Counted as an exit, never as regretted</td></tr>
       <tr><td>"End of Contract" on a Permanent</td><td class="num">90</td><td>Kept, flagged</td></tr>
-      <tr><td>Voluntary exit, regretted unknown</td><td class="num">2</td><td>Main: not regretted; upper bound: regretted</td></tr>
+      <tr><td>Voluntary exit, regretted unknown</td><td class="num">2</td><td>Not regretted</td></tr>
     </table>
     <div style="display:flex;flex-direction:column;gap:14px">
       <div class="card navy"><p class="big">2,407 → 2,400 → 2,390</p><p>rows read → people → measurable. 2,381 have a known country.</p></div>
-      <div class="card amber"><h3>The trap: recent hires</h3><p>Someone hired in October 2025 hasn't had 6 months yet. Counting them as "stayed" would inflate retention, so their group is <strong>pending</strong>. That's why every hire-based headline covers <strong>2021–2024</strong>.</p></div>
+      <div class="card amber"><h3>The trap: recent hires</h3><p>Someone hired in October 2025 hasn't had 6 months yet. Counting them as "stayed" would inflate retention, so their group is <strong>not yet observable</strong>. That's why every hire-based headline covers <strong>2021–2024</strong>.</p></div>
       <div class="card"><h3>Also found</h3><p>Nobody was hired before 2020, so headcount grows from 0 to ~1,600, which matters for reading turnover trends.</p></div>
     </div>
   </div>
@@ -242,26 +255,8 @@
     <tr><td><strong>Statistics</strong></td><td>Known-answer tests: finds a planted effect; not fooled by country confounding</td></tr>
     <tr><td><strong>API + UI</strong></td><td>Every endpoint and error; Playwright browser tests incl. empty/error states; <strong>axe accessibility audit</strong> in both themes</td></tr>
   </table>
-  <p class="sub" style="margin-top:10px">128 tests on Python 3.13 and 3.11 · strict mypy · ruff · tests validated by injecting bugs on purpose (each was caught)</p>
+  <p class="sub" style="margin-top:10px">129 tests on Python 3.13 and 3.11 · strict mypy · ruff · tests validated by injecting bugs on purpose (each was caught)</p>
   <div class="notes">(45s) Don't read the list. Pick two: the known-answer statistics tests and the axe audit that caught real contrast failures. Mention the mutation checks: I broke code on purpose to prove the tests catch it.</div>
-</section>
-
-<!-- 8 ---------------------------------------------------------------- -->
-<section class="slide">
-  <div class="top"><span class="section"><span class="n">2</span>Architecture, lineage, reliability</span><span class="time">5 min</span></div>
-  <h2>Production mapping: ADF · Databricks · Power BI</h2>
-  <table style="margin-top:6px">
-    <tr><th>Concern</th><th>Local (built)</th><th>Production (proposal)</th></tr>
-    <tr><td><strong>Orchestration</strong></td><td>asteria run</td><td>ADF pipeline: ingest → Databricks jobs (curate, analyse) → Power BI refresh</td></tr>
-    <tr><td><strong>Scheduling</strong></td><td>Manual</td><td>Monthly trigger after the latest release + event trigger on a new HR extract</td></tr>
-    <tr><td><strong>Storage</strong></td><td>Files + DuckDB</td><td>ADLS Gen2, bronze / silver / gold Delta tables in Unity Catalog</td></tr>
-    <tr><td><strong>Secrets</strong></td><td>None needed</td><td>Azure Key Vault via managed identities; Key Vault-backed Databricks secret scopes</td></tr>
-    <tr><td><strong>Observability</strong></td><td>JSON logs, manifest, quality report</td><td>Log Analytics; manifest and quality as Delta tables; alerts on failure, gate, staleness</td></tr>
-    <tr><td><strong>Access control</strong></td><td>Local</td><td>Unity Catalog grants (person-level HR restricted); Power BI row-level security by country</td></tr>
-    <tr><td><strong>Promotion</strong></td><td>Git</td><td>Dev → Test → Prod; Databricks Asset Bundles + ADF ARM; CI runs ruff, mypy, pytest per PR</td></tr>
-  </table>
-  <div class="callout" style="margin-top:14px">Carries over unchanged: adapters, domain rules, SQL, config, tests. Changes for real HR data: pseudonymised IDs, incremental <code>MERGE</code> instead of full rebuild, retention policy. Details: <code>docs/architecture.md</code>.</div>
-  <div class="notes">(45s) This is a design, not built; say so. Key message: the business logic is portable because it's plain SQL + a Python package; only orchestration, storage and serving change.</div>
 </section>
 
 <!-- 9 ---------------------------------------------------------------- -->
@@ -271,7 +266,7 @@
   <div class="grid" style="grid-template-columns: 1.6fr 1fr; align-items:start">
     <img class="shot" src="assets/findings.png" alt="Key findings panel of the dashboard">
     <div style="display:flex;flex-direction:column;gap:10px">
-      <div class="card teal"><h3>Explore</h3><p>Objective, country, business unit, period, definition, signal. Kept in the URL.</p></div>
+      <div class="card teal"><h3>Explore</h3><p>Objective, country, business unit, period, signal. Kept in the URL.</p></div>
       <div class="card teal"><h3>Understand</h3><p>Trend with 95% band and target line, next to the signal as known each month.</p></div>
       <div class="card teal"><h3>Challenge</h3><p>Country-quarter scatter sized by sample; naive vs within-country tests.</p></div>
       <div class="card teal"><h3>Trust</h3><p>Freshness, coverage, exclusions, sources, method.</p></div>
@@ -291,9 +286,9 @@
     <div>Pooled</div><div>Add the complete years together (people, not percentages): 209 stayed of 266 hired in 2021–2024 = <strong>78.6%</strong>.</div>
     <div>95% interval</div><div>How sure we are. With only 63 people the true rate could plausibly be anywhere from <strong>69.6% to 88.8%</strong>; more people give a narrower range.</div>
     <div>"Clearly" vs "on the line"</div><div><strong>Clearly</strong>: the whole range is on one side of the target. <strong>On the line</strong>: the range includes the target, so chance alone could flip the verdict.</div>
-    <div>Pending</div><div>Too early to judge: hired less than 6 or 12 months before the data ends. Never counted as "stayed".</div>
+    <div>Not yet observable</div><div>Too early to judge: hired less than 6 or 12 months before the data ends. Never counted as "stayed".</div>
     <div>Too few people</div><div>Fewer than 30 people in a group: shown, but not judged. One person leaving would move the rate by more than 3 points.</div>
-    <div>Turnover</div><div>Regretted exits in a year ÷ the average of that year's 12 month-end headcounts: 82 ÷ 1,609.7 = <strong>5.1%</strong> in 2025.</div>
+    <div>Turnover</div><div>Regretted exits in a year ÷ the mean of that year's 12 month-end headcounts: 82 ÷ 1,609.7 = <strong>5.1%</strong> in 2025.</div>
   </div>
   <div class="notes">(30s, optional) Use this slide only if the audience needs it; otherwise refer back to it during Q&A. The one idea to land: "clearly" means even the optimistic end of the range misses the target.</div>
 </section>
@@ -340,6 +335,68 @@
   <div class="notes">(45s) This is the bridge into finding 4. Read the example question aloud, then the key idea at the bottom. If challenged on "why not all leavers": it mixes kinds of leaving that react to the economy in opposite directions (fewer quits but more layoffs when unemployment is high), and it's not what the brief asks.</div>
 </section>
 
+<!-- 11b: person-months ------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">3</span>Dashboard and key findings</span><span class="time">4 min</span></div>
+  <h2>How each question becomes rows: person-months</h2>
+  <p class="lede">For turnover, one row = <strong>one employee in one month they were employed</strong>. Example: hired 2 May 2023, left 2 October 2023 (not regretted).</p>
+  <div class="grid" style="grid-template-columns: 1.15fr 1fr; gap: 18px">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <table>
+        <tr><th>Month</th><th>Employed on the 1st?</th><th class="num">Regretted exit?</th><th class="num">Sentiment known then</th></tr>
+        <tr><td>May 2023</td><td>no (hired on the 2nd): <strong>no row</strong></td><td class="num">–</td><td class="num">–</td></tr>
+        <tr><td>June 2023</td><td>yes</td><td class="num">0</td><td class="num">108.0</td></tr>
+        <tr><td>July 2023</td><td>yes</td><td class="num">0</td><td class="num">107.1</td></tr>
+        <tr><td>August 2023</td><td>yes</td><td class="num">0</td><td class="num">109.0</td></tr>
+        <tr><td>September 2023</td><td>yes</td><td class="num">0</td><td class="num">110.1</td></tr>
+        <tr><td>October 2023</td><td>yes (left on the 2nd)</td><td class="num">0 (not regretted)</td><td class="num">110.7</td></tr>
+      </table>
+      <div class="card navy"><p class="big" style="font-size:30px">65,184 person-months · 217 regretted exits</p>
+        <p>Average chance of a regretted exit in any month: 217 ÷ 65,184 = <strong>0.33%</strong>.</p></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="card teal"><h3>Why rows per month</h3><ul>
+        <li><strong>The economy changes monthly</strong>, so each month's outcome is paired with that month's signal, as known at the time</li>
+        <li><strong>Leavers vs stayers:</strong> each month compares who left with everyone who could have left but stayed</li>
+        <li><strong>Time at risk counts:</strong> 40 months employed = 40 chances to leave; a new starter had 2</li></ul></div>
+      <div class="card"><h3>The hire targets are simpler</h3><p>Everyone is followed over the same 6- or 12-month window, so it's <strong>one row per hire</strong> (1,808 new hires, 266 senior hires), matched to the economy in the hire month.</p></div>
+    </div>
+  </div>
+  <p class="plain" style="margin-top:12px"><b>In plain words</b>In months when the economy looked like this, how often did people have a regretted exit, compared with everyone who could have left but stayed?</p>
+  <div class="notes">(30s, optional) Show this if asked "what exactly did the model see?". One employee becomes one row per month employed; the month's outcome is paired with the economy as published by the 1st. The table is mart_person_months, built in src/asteria/analytics/sql/retention.sql (step 3).</div>
+</section>
+
+<!-- 11c: inside the model ---------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">3</span>Dashboard and key findings</span><span class="time">4 min</span></div>
+  <h2>Inside the model: from rows to q</h2>
+  <p class="lede">Worked on the strongest result: economic sentiment × regretted turnover.</p>
+  <div class="grid" style="grid-template-columns: 1fr 1.35fr; gap: 16px; align-items: start">
+    <div class="card"><h3>1 · What goes in: one row per employee-month</h3>
+      <table style="border:0;margin-top:4px">
+        <tr><th>Input</th><th>Example</th></tr>
+        <tr><td>Left (regretted) this month?</td><td><strong>0</strong> or 1</td></tr>
+        <tr><td>Signal known then, in steps</td><td>108.0 ÷ 5.78 = <strong>18.68</strong></td></tr>
+        <tr><td>Months into the study</td><td><strong>29</strong> (June 2023)</td></tr>
+        <tr><td>Country</td><td><strong>Greece</strong></td></tr>
+        <tr><td>Constant</td><td><strong>1</strong></td></tr>
+      </table>
+      <p style="margin-top:8px"><strong>65,184</strong> rows. Trend and country are <strong>controls</strong>, so time drift and country differences aren't credited to sentiment.</p></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="steps">
+        <div class="stepc"><span class="k">2 · Coefficient</span><p class="v">b = −0.20</p><p>The model's key output. Negative: higher sentiment, lower odds of a regretted exit</p></div>
+        <div class="stepc"><span class="k">3 · Odds ratio</span><p class="v">0.82</p><p>e<sup>b</sup>. One step up (5.78 points) = 18% lower <em>odds</em>, not 18% lower probability</p></div>
+        <div class="stepc"><span class="k">4 · 95% range</span><p class="v">0.68–0.99</p><p>Plausible values given the uncertainty</p></div>
+        <div class="stepc"><span class="k">5 · p-value</span><p class="v">0.035</p><p>z = b ÷ std. error = −2.11. "If there were no link, how unusual is a result this strong?"</p></div>
+        <div class="stepc q"><span class="k">6 · q-value</span><p class="v">0.53</p><p>Computed <strong>after</strong> all 15 models: adjusts p for testing 15 relationships</p></div>
+      </div>
+      <div class="callout amber">q = 0.53 is far above 0.05, so this is <strong>not</strong> counted as a link. The regression produces b, the odds ratio, the range and p; q comes from comparing all 15 results (Benjamini-Hochberg).</div>
+    </div>
+  </div>
+  <p class="flow" style="margin-top:12px"><strong>The flow:</strong> employee-month rows → regression → coefficient b → odds ratio + 95% range + p → adjust all 15 p-values → q. &nbsp;·&nbsp; <strong>Simpler:</strong> the model estimates the relationship; p says how surprising it is; q corrects for having asked 15 questions.</p>
+  <div class="notes">(45s, optional) 1. For every employee and month we create one row: did they leave (0/1), the signal at that time (18.68 steps), how far into the study (29 months), which country (Greece), and a constant (1). 65,184 rows. 2. The model finds the relationship between the signal and leaving; the important number is b = −0.2015. Negative means higher sentiment goes with lower odds of a regretted exit. Trend and country are controls so normal time trends and country differences aren't attributed to sentiment. 3. The odds ratio is e^b = 0.82: one step up in the signal (one typical swing, 5.78 sentiment points) goes with about 18% lower odds (1 − 0.82). That's a change in odds, not an 18% change in probability. 4. The 95% range is 0.68 to 0.99: plausible values given the uncertainty. 5. b ÷ standard error = z = −2.11, giving p = 0.035: if there were no relationship, a result this strong would be relatively unusual. 6. We ran 15 tests, so after all of them we adjust the p-values with Benjamini-Hochberg: p = 0.035 becomes q = 0.53. The q-value is not produced by the regression itself.</div>
+</section>
+
 <!-- 11 --------------------------------------------------------------- -->
 <section class="slide">
   <div class="top"><span class="section"><span class="n">3</span>Dashboard and key findings</span><span class="time">4 min</span></div>
@@ -370,22 +427,22 @@
 <section class="slide">
   <div class="top"><span class="section"><span class="n">4</span>Tradeoffs, AI usage, next steps</span><span class="time">3 min</span></div>
   <h2>Tradeoffs and limitations</h2>
-  <div class="grid g2" style="margin-top:6px">
+  <div class="grid g2" style="margin-top:4px">
     <div class="card amber"><h3>Limits of the evidence</h3><ul>
-      <li>Synthetic, hiring-only workforce (nobody before 2020): turnover trends mix real change with a maturing workforce</li>
-      <li>Six countries, about five years: only moderate-to-large effects detectable</li>
-      <li>The turnover model doesn't control for time since hire, which strongly drives leaving (2.4% a month in the first 6 months vs 0.5% after 2 years)</li>
-      <li>Definitions rest on assumptions until the clarification answers arrive (each is a config switch)</li>
-      <li>Only inflation has first-release values; others are today's revised figures (inflation checked: never revised)</li>
-      <li>Italy's vacancy rate uses a different definition (Eurostat flag)</li></ul></div>
+      <li><strong>Synthetic, hired from 2020 on:</strong> a turnover trend may reflect a longer-serving workforce, not the economy</li>
+      <li><strong>6 countries, ~5 years:</strong> large effects are detectable; small ones may go unnoticed</li>
+      <li><strong>Time since hire not controlled:</strong> new starters leave far more (2.4% a month in the first 6 months vs 0.5% after 2 years)</li>
+      <li><strong>Revised economic data:</strong> most signals are today's revised figures; inflation was checked and never revised</li>
+      <li><strong>Italy's vacancies:</strong> measured differently, so not fully comparable</li></ul></div>
     <div class="card teal"><h3>Deliberate choices</h3><ul>
-      <li>DuckDB + FastAPI + plain HTML: free, offline, easy to review; maps cleanly to Databricks + Power BI</li>
-      <li>Conservative lags: can only make data slightly stale, never leak</li>
-      <li>One lag per series (Ireland publishes a month earlier; not exploited)</li>
-      <li>Logistic regression over machine learning: the question is "is there a link?", not "predict who leaves"</li>
-      <li>Full rebuild instead of incremental loads, which is right at 2,400 rows</li></ul></div>
+      <li><strong>DuckDB + FastAPI + HTML:</strong> free, offline, easy to review; can move to Databricks + Power BI</li>
+      <li><strong>Conservative lags:</strong> never use data before it was public; the cost is slightly staler data</li>
+      <li><strong>One lag per series:</strong> consistent method; Ireland's earlier publishing not exploited</li>
+      <li><strong>Logistic regression, not ML:</strong> the question is "is there a link?", not "who will leave?"</li>
+      <li><strong>Full rebuild:</strong> 2,400 rows rebuild in seconds; incremental loading isn't worth the complexity</li></ul></div>
   </div>
-  <div class="notes">(60s) Be upfront: the non-finding is partly a power limitation. Every limitation here is also written in the source register or findings doc.</div>
+  <p class="plain" style="margin-top:14px"><b>In one sentence</b>We prioritised fairness, interpretability, reproducibility and no data leakage; the small, synthetic dataset limits how far the results generalise.</p>
+  <div class="notes">(60s) Limits: (1) Everyone was hired from 2020 onward, so a change in turnover over time could just be the workforce becoming longer-serving, not the economy. (2) Six countries and about five years: we can reliably detect larger effects, but small effects might go unnoticed. (3) Time since hire isn't controlled: about 2.4% leave per month in their first 6 months vs 0.5% after 2 years, so turnover can fall naturally as the workforce matures. (4) Most indicators use today's revised numbers rather than what was first published; inflation's original values were checked and never revised. (5) Italy measures vacancies differently, so its figures aren't perfectly comparable. Choices: DuckDB + FastAPI + HTML because free, simple, offline and easy to review, and the structure moves to Databricks + Power BI. Conservative lags stop the model using information that wasn't available yet, at the cost of slightly less up-to-date data. One consistent lag per indicator, even though Ireland publishes some data earlier. Logistic regression because the question is whether conditions relate to leaving, not predicting who leaves, and it's easier to interpret. Full rebuild because with 2,400 rows it's simple and fast, so incremental loading isn't worth it.</div>
 </section>
 
 <!-- 14 --------------------------------------------------------------- -->
@@ -395,10 +452,12 @@
   <div class="grid g2" style="margin-top:6px">
     <div class="card teal"><h3>Decisions that stayed mine</h3><ul>
       <li>Software emphasis; repository shape (changed the agent's layout to the brief's)</li>
+      <li><strong>Created <code>CLAUDE.md</code></strong>: every rule from the brief, loaded each session to keep the agent in scope; extended when it slipped (e.g. Python 3.11 syntax)</li>
       <li>Cut clarification questions 10 → 3; analyse blind, not from the data generator</li>
       <li>Indicator set (from my own search, fact-checked by the agent)</li>
       <li>Methodology: when I found I hadn't been consulted, every option was put back to me and re-run</li>
-      <li>Lag fixes, dashboard changes, pooling rule</li></ul></div>
+      <li>Lag fixes, dashboard changes, pooling rule</li>
+      <li><strong>API refactor</strong>: split the single-file API into routers, repository, schemas and services</li></ul></div>
     <div class="card coral"><h3>Agent errors caught by verification</h3><ul>
       <li>Defect list from reading code: 3 overstatements, 1 missed; fixed by profiling</li>
       <li>Two licence URLs recalled from memory were wrong</li>
@@ -417,20 +476,19 @@
   <div class="grid g2" style="margin-top:6px">
     <table>
       <tr><th>#</th><th>Next step</th><th>Why</th></tr>
-      <tr><td>1</td><td><strong>Apply the clarification answers</strong></td><td>Change config, rerun: senior scope and the headcount rule</td></tr>
+      <tr><td>1</td><td><strong>Add time since hire</strong></td><td>To the turnover model: the strongest driver of leaving in this data</td></tr>
       <tr><td>2</td><td><strong>Act on senior retention</strong></td><td>The clear gap; look at internal drivers (onboarding, role fit)</td></tr>
-      <tr><td>3</td><td><strong>Release-calendar ingest</strong></td><td>Exact publication dates and per-country lags instead of fixed lags</td></tr>
+      <tr><td>3</td><td><strong>Release-calendar ingest</strong></td><td>Today: one fixed lag per indicator, checked against real release dates. Next: load each value's actual release date</td></tr>
       <tr><td>4</td><td><strong>Point-in-time vintages</strong></td><td>First-release values for every signal, not only inflation</td></tr>
-      <tr><td>5</td><td><strong>Robustness checks</strong></td><td>Add time since hire to the turnover model; linear-probability and survival models alongside logistic</td></tr>
-      <tr><td>6</td><td><strong>Productionise</strong></td><td>ADF + Databricks + Power BI per the mapping; CI/CD, alerts, RLS</td></tr>
+      <tr><td>5</td><td><strong>Robustness checks</strong></td><td>Linear-probability and survival models alongside logistic</td></tr>
+      <tr><td>6</td><td><strong>Productionise</strong></td><td>ADF + Databricks + Power BI; proposal in docs/architecture.md</td></tr>
     </table>
     <div style="display:flex;flex-direction:column;gap:12px">
-      <div class="card navy"><h3>Effort</h3><p>Approximately <strong>[fill in] hours</strong> across framing, sources, pipeline, analysis, dashboard, and documentation.</p></div>
       <div class="card"><h3>Try it</h3><p><code>git clone …/asteria-retention-signals</code><br><code>uv sync</code> · <code>uv run asteria run</code> · <code>uv run asteria serve</code></p></div>
       <div class="card"><h3>Read more</h3><p>docs/findings.md · docs/analysis_explained.md · docs/source_register.md · docs/architecture.md · AI_USAGE.md</p></div>
     </div>
   </div>
-  <div class="notes">(45s) Close on the decision: senior retention is where leaders should act; the economy doesn't explain it with this data. Fill in the effort estimate honestly before presenting.</div>
+  <div class="notes">(45s) Close on the decision: senior retention is where leaders should act; the economy doesn't explain it with this data. On step 3: today each indicator has one fixed, conservative lag, checked against real release dates; the next step is to load the actual release date of every value.</div>
 </section>
 
 </div>

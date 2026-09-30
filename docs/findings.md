@@ -1,17 +1,17 @@
 # Findings
 
-> **Draft for human review.** Written from `data/curated/objective_measures.csv` and `association_results.csv` (run of 2026-09-28, as-of 2025-12-31). Metric definitions follow the default assumptions in [clarification_questions.md](clarification_questions.md). Intervals are Wilson 95%. "Pooled" = hire years 2021–2024, the mature cohorts.
+> **Draft for human review.** Written from `data/curated/objective_measures.csv` and `association_results.csv` (run of 2026-09-28, as-of 2025-12-31). Metric definitions are confirmed by the clarification answers ([clarification_questions.md](clarification_questions.md)). Intervals are Wilson 95%. "Pooled" = hire years 2021–2024, the mature cohorts.
 
 ## 1. Senior-hire retention misses its target in every year, under either definition of "senior"
 
 | Scope | Retained after 12 months | 95% CI | Target |
 |---|---:|---|---:|
-| Senior Leader (assumption) | **78.6%** (209 / 266) | 73.3–83.1% | ≥ 90% |
+| Senior Leader (confirmed definition) | **78.6%** (209 / 266) | 73.3–83.1% | ≥ 90% |
 | Senior Leader + Manager (sensitivity) | 81.0% (654 / 807) | 78.2–83.6% | ≥ 90% |
 
 - Each mature hire year misses the target (73.9%, 78.9%, 80.6%, 81.0% for 2021–2024), and the whole interval sits below 90% (`confidence = clear`).
 - Every country is below target (73.6% BG to 81.0% IT). Per-country samples are 35–55 hires, too small to rank countries reliably.
-- **Decision relevance:** this is the largest and most robust gap. It does not depend on the open clarification question about which levels count as senior.
+- **Decision relevance:** this is the largest and most robust gap. It uses the confirmed definition (Senior Leader only), and it would hold even if Managers were included.
 
 ## 2. New-hire six-month retention sits on the target, not clearly above it
 

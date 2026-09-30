@@ -12,6 +12,6 @@ allowed:
   termination_type: [Voluntary, Involuntary, End of Contract]
   source_system: [HCM_A, HCM_B]
 
-# Assumption pending clarification question 1: "Sr Mgmt" is another label for Senior Leader.
+# Confirmed by clarification question 1: normalise "Sr Mgmt" to Senior Leader.
 career_level_aliases:
   Sr Mgmt: Senior Leader

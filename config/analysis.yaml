@@ -1,6 +1,6 @@
 # Metric definitions and temporal-alignment rules.
 # Targets and directions are read from the starter objectives file, never restated here.
-# Every choice marked "assumption" is a default from docs/clarification_questions.md.
+# Definitions confirmed by the clarification answers (docs/clarification_questions.md).
 
 objectives_file: data/raw-or-fixtures/starter/retention_objectives.csv
 
@@ -13,16 +13,16 @@ min_sample: 30
 objectives:
   NEW_HIRE_6M:
     measure: cohort_retention
-    months: 6              # assumption: calendar months; retained if employed through the anniversary
+    months: 6              # confirmed (Q2): hire + 6 months <= as-of date; employed through the anniversary = retained
     levels: null           # all career levels
   SENIOR_HIRE_12M:
     measure: cohort_retention
     months: 12
-    levels: [Senior Leader]                     # assumption (Q1); Sr Mgmt is mapped in workforce.yaml
+    levels: [Senior Leader]                     # confirmed (Q1): Senior Leader only; Sr Mgmt mapped in workforce.yaml
     sensitivity_levels: [Senior Leader, Manager]
   REGRETTED_TURNOVER_12M:
     measure: trailing_regretted_turnover
-    months: 12             # assumption (Q4): mean of the 12 month-end headcounts in the window
+    months: 12             # confirmed (Q3): mean of the 12 month-end active headcounts in the window
 
 # Workforce segment offered as a filter (brief: at least one).
 segment: business_unit

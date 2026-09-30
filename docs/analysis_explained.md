@@ -80,13 +80,13 @@ The finding adds up the complete years (2025 is still pending):
 
 It adds counts, not percentages. Averaging the four percentages would give big and small years equal weight.
 
-### "Main" vs "Senior + Manager"
+### "Main" vs "Senior + Manager" (a check, not on the dashboard)
 
-The brief doesn't say which career levels count as "senior", so we asked, and in the meantime we compute both:
+The brief doesn't say which career levels count as "senior", so we asked. The answer confirmed Senior Leader only; the second definition is kept as a sensitivity check:
 
 | Definition | Who counts as senior | Pooled 2021–2024 |
 |---|---|---|
-| **Main** (our assumption) | Senior Leader, including the 10 "Sr Mgmt" rows mapped to it | **209 / 266 = 78.6%** |
+| **Main** (confirmed by the clarification answer) | Senior Leader, including the 10 "Sr Mgmt" rows mapped to it | **209 / 266 = 78.6%** |
 | **Senior + Manager** (sensitivity check) | Senior Leader **and** Manager | **654 / 807 = 81.0%** (yearly 83.8, 81.2, 77.8, 81.2%) |
 
 Both are clearly below 90%, so **finding 1 doesn't depend on the answer**. That's why we show the second definition: it proves the assumption doesn't drive the conclusion. In the config (`config/analysis.yaml`) this is `levels` vs `sensitivity_levels`.
@@ -109,7 +109,7 @@ The definition you asked about, phrase by phrase:
 | **In the trailing 12 months** | A sliding 12-month window. The "2025" value covers exits from 1 Jan to 31 Dec 2025; the "March 2025" monthly value covers April 2024 to March 2025. |
 | **Mean of the 12 month-end headcounts** | Count the workforce on the last day of each of the 12 months, then average the 12 numbers. It's the "typical workforce size" during the window. The workforce grew a lot, so the start or end alone would be misleading. |
 | **Unknown regretted flags** | 2 people quit voluntarily but their regretted field is blank: one in Bulgaria (Nov 2024), one in Ireland (Jan 2022) |
-| **Count as not regretted / upper-bound variant** | *Main* treats them as not regretted. *Unknown regrets counted* (the Definition filter) treats them as regretted. That changes 2022 from 32 to 33 exits (3.73% → 3.85%) and 2024 from 46 to 47 (3.27% → 3.34%). The verdict is the same either way. |
+| **Count as not regretted / upper-bound variant** | *Main* treats them as not regretted. The *upper-bound* variant (kept in the data as a check, not shown on the dashboard) treats them as regretted. That changes 2022 from 32 to 33 exits (3.73% → 3.85%) and 2024 from 46 to 47 (3.27% → 3.34%). The verdict is the same either way. |
 
 ### Worked example: 2025 = 5.1%
 
@@ -320,7 +320,7 @@ A result counts only if **q < 0.05**. The smallest q is **0.53**, so **nothing c
 
 | Limitation | What it means |
 |---|---|
-| Assumptions pending clarification | Senior scope and the headcount rule are config switches; finding 1 holds under both senior definitions |
+| Definitions confirmed by the clarification answers | Senior Leader only, hires from 2021 with complete windows, mean of 12 month-end headcounts; still config switches if they change |
 | No employees hired before 2020 | Turnover trends mix real change with a workforce that is still growing and maturing |
 | Small numbers of leavers (57 / 232 / 217) | Only moderate-to-large effects could have been detected; "no evidence of a link" is not "proof of no link" |
 | One fixed lag per signal | Checked against real release dates; Ireland publishes unemployment a month earlier (not exploited) |

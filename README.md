@@ -93,7 +93,7 @@ uv run asteria serve    # then open http://127.0.0.1:8000  (API reference: /docs
 | View | What it shows |
 |---|---|
 | Key findings | The four findings with live numbers and verdicts; "Show me" sets the filters for each |
-| Explore | One filter row scoping everything: objective, country, business unit, period grain, definition (main or sensitivity), external signal. Kept in the URL. |
+| Explore | One filter row scoping everything: objective, country, business unit, period grain, external signal. The dashboard always uses the confirmed (main) definitions. Kept in the URL. |
 | Understand | Objective trend with 95% interval and target line; the selected signal as known each month, as a separate chart (different units, never a dual axis) |
 | Challenge | Country-quarter scatter sized by sample; naive vs within-country association table with q-values and a plain-language verdict |
 | Trust | Freshness, coverage, provider flags, quality rules with affected rows, definitions, sources and licences |
