@@ -23,10 +23,11 @@
   <nav class="bar" aria-label="Dashboard">
     <div class="wrap">
       <div class="nav-links">
+        <a href="#findings">Findings</a>
         <a href="#status">Status</a>
-        <a href="#understand">Understand</a>
-        <a href="#challenge">Challenge</a>
-        <a href="#trust">Trust</a>
+        <a href="#understand">Trends</a>
+        <a href="#challenge">Relationships</a>
+        <a href="#trust">Data trust</a>
       </div>
       <form class="filters" id="filters" aria-label="Filters">
         <label>Objective <select id="f-objective" name="objective"></select></label>
@@ -45,15 +46,15 @@
 
   <main id="main" class="wrap" aria-busy="true">
     <section class="hero" aria-labelledby="page-title">
-      <p class="eyebrow">Retention insight product</p>
-      <h1 id="page-title">Retention signals</h1>
-      <p class="hero-lead">How Asteria performs against its three workforce-retention objectives, and whether
-        external labour-market and macroeconomic conditions add useful context, with what can and cannot be concluded.</p>
+      <div>
+        <h1 id="page-title">Retention signals</h1>
+        <p class="hero-lead">Three retention objectives, with external labour-market context.</p>
+      </div>
       <div class="pill-row" aria-label="Scope">
-        <span class="pill"><span class="pill-dot"></span>6 operating countries</span>
-        <span class="pill"><span class="pill-dot"></span>3 retention objectives</span>
-        <span class="pill"><span class="pill-dot"></span>5 external signals, 2 providers</span>
-        <span class="pill"><span class="pill-dot"></span>Synthetic workforce data</span>
+        <span class="pill"><span class="pill-dot"></span>6 countries</span>
+        <span class="pill"><span class="pill-dot"></span>3 objectives</span>
+        <span class="pill"><span class="pill-dot"></span>5 external signals</span>
+        <span class="pill"><span class="pill-dot"></span>Synthetic data</span>
       </div>
     </section>
 
@@ -65,29 +66,27 @@
       </div>
     </div>
 
+    <section class="section" id="findings" aria-labelledby="h-findings">
+      <header class="panel-head">
+        <h2 id="h-findings">Key findings</h2>
+        <p class="panel-caption">Complete hire years pooled (2021–2024). Use "Show me" to open the evidence.</p>
+      </header>
+      <div class="findings-grid" id="findings-grid"></div>
+    </section>
+
     <section class="section" id="status" aria-labelledby="h-status">
-      <div class="section-head">
-        <span class="section-number" aria-hidden="true">01</span>
-        <div class="section-title">
-          <p class="eyebrow">Objective status</p>
-          <h2 id="h-status">Where each objective stands</h2>
-          <p class="lede">Latest measured period for the selected country and business unit. Periods whose
-            observation window has not finished are pending, never counted as retained.</p>
-        </div>
-      </div>
+      <header class="panel-head">
+        <h2 id="h-status">Objective status</h2>
+        <p class="panel-caption">Latest measurable period for the selected filters. Unfinished periods are pending.</p>
+      </header>
       <div class="tiles" id="tiles"></div>
     </section>
 
     <section class="section" id="understand" aria-labelledby="h-understand">
-      <div class="section-head">
-        <span class="section-number" aria-hidden="true">02</span>
-        <div class="section-title">
-          <p class="eyebrow">Understand</p>
-          <h2 id="h-understand">Trends alongside external signals</h2>
-          <p class="lede">The selected objective over time, next to the selected signal as it was known at the
-            time. Two charts on purpose: they have different units, so they never share an axis.</p>
-        </div>
-      </div>
+      <header class="panel-head">
+        <h2 id="h-understand">Trends</h2>
+        <p class="panel-caption">Objective over time, and the selected signal as it was known each month.</p>
+      </header>
       <div class="grid-2">
         <figure class="card" id="fig-trend">
           <figcaption>
@@ -115,15 +114,10 @@
     </section>
 
     <section class="section" id="challenge" aria-labelledby="h-challenge">
-      <div class="section-head">
-        <span class="section-number" aria-hidden="true">03</span>
-        <div class="section-title">
-          <p class="eyebrow">Challenge</p>
-          <h2 id="h-challenge">Does the objective move with the signal?</h2>
-          <p class="lede">Each dot is one country-quarter; larger dots contain more people. The table tests every
-            signal properly, comparing each country only with itself.</p>
-        </div>
-      </div>
+      <header class="panel-head">
+        <h2 id="h-challenge">Relationships</h2>
+        <p class="panel-caption">Outcome against the signal by country-quarter, and the association tests.</p>
+      </header>
       <div class="grid-challenge">
         <figure class="card" id="fig-scatter">
           <figcaption>
@@ -150,15 +144,10 @@
     </section>
 
     <section class="section" id="trust" aria-labelledby="h-trust">
-      <div class="section-head">
-        <span class="section-number" aria-hidden="true">04</span>
-        <div class="section-title">
-          <p class="eyebrow">Trust</p>
-          <h2 id="h-trust">Freshness, quality, sources, and method</h2>
-          <p class="lede">How fresh and complete the inputs are, what was excluded and why, where the data comes
-            from, and how every number is defined.</p>
-        </div>
-      </div>
+      <header class="panel-head">
+        <h2 id="h-trust">Data trust</h2>
+        <p class="panel-caption">Freshness, coverage, quality exclusions, sources and definitions.</p>
+      </header>
       <div class="grid-trust">
         <div class="stack">
           <div class="card">

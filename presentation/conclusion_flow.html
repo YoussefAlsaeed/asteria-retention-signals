@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>From data to conclusion</title>
+<style>
+  :root { --ink:#10253f; --soft:#40546b; --paper:#f4f7f8; --line:#d9e3e8; --teal:#087e78; --teal-dark:#075f5c;
+    --teal-pale:#dff3f0; --coral:#ef6a5b; --coral-pale:#fff0ed; --amber:#c47b08; --amber-pale:#fff5d9; --navy:#10253f; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  #flow { width: 1500px; padding: 36px 40px 32px; background: var(--paper); }
+  .eyebrow { margin: 0 0 6px; color: var(--teal-dark); font-size: 13px; font-weight: 820; letter-spacing: .13em; text-transform: uppercase; }
+  h1 { margin: 0 0 4px; font-size: 34px; letter-spacing: -.03em; }
+  .lede { margin: 0 0 22px; color: var(--soft); font-size: 16px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; }
+  .stage { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; font-size: 12px; font-weight: 820;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--soft); grid-column: 1 / -1; }
+  .stage .n { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; color: #fff;
+    background: var(--teal); font-size: 12px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+  .card h3 { margin: 0 0 6px; font-size: 16px; }
+  .card p, .card li { margin: 2px 0; font-size: 13.5px; color: var(--soft); line-height: 1.45; }
+  .card ul { margin: 4px 0 0; padding-left: 18px; }
+  .card strong { color: var(--ink); }
+  .arrows { display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; margin: 6px 0; }
+  .arrow { text-align: center; color: var(--teal); font-size: 22px; font-weight: 900; line-height: 1; }
+  .merge { grid-column: 1 / -1; text-align: center; color: var(--teal); font-size: 13px; font-weight: 760; }
+  .findings { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 4px; }
+  .finding { background: #fff; border: 1px solid var(--line); border-top: 5px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+  .finding.bad { border-top-color: var(--coral); }
+  .finding.ok { border-top-color: var(--teal); }
+  .finding.warn { border-top-color: var(--amber); }
+  .finding.none { border-top-color: var(--navy); }
+  .finding .tag { font-size: 11px; font-weight: 820; letter-spacing: .08em; text-transform: uppercase; color: var(--soft); }
+  .finding h3 { margin: 4px 0 8px; font-size: 16px; }
+  .finding .metric { color: var(--ink); font-size: 30px; font-weight: 780; letter-spacing: -.03em; margin: 0; }
+  .finding .ci { font-size: 13px; color: var(--soft); margin: 2px 0 8px; }
+  .verdict { display: inline-block; font-size: 12px; font-weight: 820; letter-spacing: .05em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 999px; background: #eef3f5; }
+  .bad .verdict { color: #b42323; } .ok .verdict { color: #006300; } .warn .verdict { color: #7a4d05; } .none .verdict { color: var(--navy); }
+  .finding p { margin: 8px 0 0; font-size: 13px; color: var(--soft); line-height: 1.45; }
+  .checks { margin-top: 18px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .check { background: var(--teal-pale); border: 1px solid #aadbd6; border-radius: 12px; padding: 10px 14px; font-size: 13px; color: #084f4c; }
+  .check strong { display: block; font-size: 15px; color: var(--ink); }
+  .foot { margin-top: 14px; font-size: 12px; color: var(--soft); }
+</style>
+</head>
+<body>
+<div id="flow">
+  <p class="eyebrow">Asteria retention signals · how the conclusion was reached</p>
+  <h1>From raw data to four findings</h1>
+  <p class="lede">Left: the employee path (findings 1–3 use only this). Right: the external path, joined to employee outcomes to test finding 4.</p>
+
+  <div class="grid">
+    <div class="stage"><span class="n">1</span> Inputs</div>
+    <div class="card">
+      <h3>Workforce file (synthetic)</h3>
+      <p><strong>2,407 rows</strong>: hires and exits across 6 countries, 2020–2025.</p>
+      <p>3 targets from the starter pack.</p>
+    </div>
+    <div class="card">
+      <h3>External data (public)</h3>
+      <p><strong>5 signals, 2 providers:</strong> unemployment, job vacancies, inflation, economic sentiment (Eurostat); GDP growth (World Bank).</p>
+      <p><strong>2,456 values</strong>, monthly, quarterly and annual.</p>
+    </div>
+  </div>
+  <div class="arrows"><div class="arrow">↓</div><div class="arrow">↓</div></div>
+
+  <div class="grid">
+    <div class="stage"><span class="n">2</span> Prepare</div>
+    <div class="card">
+      <h3>Clean and flag (23 quality rules)</h3>
+      <ul>
+        <li>7 duplicates removed → <strong>2,400 people</strong></li>
+        <li>10 invalid records excluded → <strong>2,390 measurable</strong></li>
+        <li>9 with no country: company-wide figures only</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Time-safe join ("what was known then")</h3>
+      <ul>
+        <li>A value is used only after its <strong>publication date</strong></li>
+        <li>Lags: 62 / 90 / 25 / 10 / 200 days, <strong>checked against real release dates</strong></li>
+        <li>Annual values keep their own year and age</li>
+      </ul>
+    </div>
+  </div>
+  <div class="arrows"><div class="arrow">↓</div><div class="arrow">↓</div></div>
+
+  <div class="grid">
+    <div class="stage"><span class="n">3</span> Measure and test</div>
+    <div class="card">
+      <h3>Measure the three targets</h3>
+      <ul>
+        <li>Group hires by month; <strong>lost = left before the 6- or 12-month anniversary</strong></li>
+        <li>Unfinished groups are <strong>pending</strong>, never counted as retained</li>
+        <li>Turnover = regretted exits ÷ average of 12 month-end headcounts</li>
+        <li>95% interval on every rate; <strong>fewer than 30 people = not judged</strong></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Test: does the economy line up with leaving?</h3>
+      <ul>
+        <li><strong>15 models</strong> (3 targets × 5 signals), one row per person</li>
+        <li>Each country compared <strong>only with itself</strong>, plus a time trend</li>
+        <li>Correction for running 15 tests (Benjamini-Hochberg q)</li>
+      </ul>
+    </div>
+    <div class="merge">↖ employee outcomes feed the test ↗</div>
+  </div>
+  <div class="arrows"><div class="arrow">↓</div><div class="arrow">↓</div></div>
+
+  <div class="stage" style="display:flex"><span class="n">4</span> Findings (pooled 2021–2024 hires; turnover per calendar year)</div>
+  <div class="findings">
+    <div class="finding bad">
+      <span class="tag">Finding 1 · senior hires kept 12 months</span>
+      <h3>Target ≥ 90%</h3>
+      <p class="metric">78.6%</p>
+      <p class="ci">95% interval 73.3–83.1% · 266 hires</p>
+      <span class="verdict">✕ Clearly missed</span>
+      <p>Every year below target (73.9 → 81.0%). Still missed if Managers count as senior (81.0%).</p>
+    </div>
+    <div class="finding warn">
+      <span class="tag">Finding 2 · new hires kept 6 months</span>
+      <h3>Target ≥ 86%</h3>
+      <p class="metric">86.8%</p>
+      <p class="ci">95% interval 85.0–88.3% · 1,640 hires</p>
+      <span class="verdict">≈ Met, on the line</span>
+      <p>Every year's interval includes 86%. No country or business unit is a reliable outlier.</p>
+    </div>
+    <div class="finding ok">
+      <span class="tag">Finding 3 · regretted turnover, 12 months</span>
+      <h3>Limit ≤ 7.5%</h3>
+      <p class="metric">3.3–5.1%</p>
+      <p class="ci">4.3 · 3.7 · 3.3 · 3.3 · <strong>5.1%</strong> (2021–2025)</p>
+      <span class="verdict">✓ Within limit, rising</span>
+      <p>2025 up (82 exits vs 46). RO, IE, BG closest to the limit. Growing, young workforce may explain part.</p>
+    </div>
+    <div class="finding none">
+      <span class="tag">Finding 4 · external signals</span>
+      <h3>Any link to leaving?</h3>
+      <p class="metric">0 of 15</p>
+      <p class="ci">significant after correction · smallest q 0.53</p>
+      <span class="verdict">○ No association</span>
+      <p>Only hint: higher sentiment, fewer regretted exits (p 0.04), not significant after correction. Association ≠ causation.</p>
+    </div>
+  </div>
+
+  <div class="checks">
+    <div class="check"><strong>107 / 107</strong>every number recomputed by separate code</div>
+    <div class="check"><strong>124 tests</strong>metrics, time rules, API, dashboard, accessibility</div>
+    <div class="check"><strong>Lags spot-checked</strong>against official release dates; one leak found and fixed</div>
+    <div class="check"><strong>Byte-identical</strong>rebuild from a clean clone</div>
+  </div>
+  <p class="foot">Assumptions (pending clarification): senior = Senior Leader (Sr Mgmt mapped to it); 2021+ monthly hire cohorts; turnover denominator = mean of 12 month-end headcounts. Workforce data is synthetic.</p>
+</div>
+</body>
+</html>

@@ -185,6 +185,38 @@ class Repository:
             """
         )
 
+    def pooled_cohorts(self) -> list[dict[str, Any]]:
+        """Hire-based objectives pooled over complete (non-pending) hire years, company-wide."""
+        return self._rows(
+            """
+            SELECT objective_id, variant,
+                   sum(numerator) AS numerator, sum(denominator) AS denominator,
+                   sum(numerator) / sum(denominator) AS rate,
+                   wilson_low(sum(numerator)::DOUBLE, sum(denominator)) AS ci_low,
+                   wilson_high(sum(numerator)::DOUBLE, sum(denominator)) AS ci_high,
+                   min(year(period_start)) AS first_year, max(year(period_start)) AS last_year,
+                   list(rate ORDER BY period_start) AS yearly_rates
+            FROM mart_objective_measures AS m
+            JOIN cfg_objectives AS o USING (objective_id)
+            WHERE o.measure = 'cohort_retention' AND grain = 'year' AND country_code = 'ALL'
+              AND segment_value = 'All' AND status <> 'pending'
+            GROUP BY objective_id, variant
+            ORDER BY objective_id, variant
+            """
+        )
+
+    def yearly_turnover(self) -> list[dict[str, Any]]:
+        return self._rows(
+            """
+            SELECT year(period_end) AS year, numerator, denominator, rate, ci_low, ci_high,
+                   status, confidence
+            FROM mart_objective_measures
+            WHERE objective_id = 'REGRETTED_TURNOVER_12M' AND variant = 'main' AND grain = 'year'
+              AND country_code = 'ALL' AND segment_value = 'All'
+            ORDER BY period_end
+            """
+        )
+
     def workforce_counts(self) -> dict[str, int]:
         row = self._rows(
             """

@@ -25,6 +25,7 @@ from asteria.api.schemas import (
     AssociationCell,
     AssociationRow,
     CountryInfo,
+    Findings,
     Grain,
     Health,
     MeasureSeries,
@@ -75,6 +76,10 @@ def create_app(ctx: Context) -> FastAPI:
         request.state.request_id = uuid.uuid4().hex[:8]
         started = time.perf_counter()
         response = await call_next(request)
+        if not request.url.path.startswith("/api/"):
+            # Dashboard files: browsers must revalidate (cheap 304 via ETag), so an updated
+            # dashboard is never served from a stale cache.
+            response.headers.setdefault("Cache-Control", "no-cache")
         if request.url.path.startswith("/api/"):
             response.headers["Cache-Control"] = "no-store"
             log.info(
@@ -210,6 +215,27 @@ def create_app(ctx: Context) -> FastAPI:
         objective_or_404(objective_id)
         signal_or_404(indicator_id)
         return repo.association_cells(objective_id, indicator_id)
+
+    @app.get("/api/findings", response_model=Findings)
+    def findings() -> Findings:
+        within = [
+            {**row, "objective_id": objective_id}
+            for objective_id in objectives
+            for row in repo.associations(objective_id)
+            if row["model"] == "within_country" and row["q_value"] is not None
+        ]
+        strongest = min(within, key=lambda r: r["p_value"]) if within else None
+        return Findings(
+            pooled=repo.pooled_cohorts(),  # type: ignore[arg-type]
+            turnover=repo.yearly_turnover(),  # type: ignore[arg-type]
+            association_tests=len(within),
+            association_significant=sum(1 for r in within if r["q_value"] < 0.05),
+            smallest_q=min((r["q_value"] for r in within), default=None),
+            strongest=AssociationRow(**{k: v for k, v in strongest.items() if k != "objective_id"})
+            if strongest
+            else None,
+            strongest_objective=strongest["objective_id"] if strongest else None,
+        )
 
     @app.get("/api/trust", response_model=Trust)
     def trust() -> Trust:

@@ -15,6 +15,8 @@ const SEVERITY = { corrected: "Corrected", warn: "Kept, flagged", exclude: "Excl
 
 const $ = (id) => document.getElementById(id);
 const pct = (v, d = 1) => (v === null || v === undefined ? "–" : `${(v * 100).toFixed(d)}%`);
+// When a rate rounds to its target (7.5% vs 7.5%), show 2 decimals so "not met" is visible.
+const pctVs = (v, target) => (pct(v) === pct(target) && v !== target ? pct(v, 2) : pct(v));
 const num = (v, d = 0) => (v === null || v === undefined ? "–"
   : Number(v).toLocaleString("en-GB", { maximumFractionDigits: d, minimumFractionDigits: d }));
 const asDate = (s) => new Date(`${s}T00:00:00Z`);
@@ -22,6 +24,7 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 
 let meta = null;
 let trust = null;
+let findings = null;
 let cache = null;
 const state = {};
 
@@ -130,6 +133,7 @@ async function refresh() {
       api(`objectives/${o}/associations/${state.signal}/cells`),
     ]);
     trust = trust || await api("trust");
+    findings = findings || await api("findings");
     cache = { tiles, series, signalSeries, assoc, cells };
     hideBanner();
     drawAll();
@@ -142,6 +146,7 @@ async function refresh() {
 
 function drawAll() {
   if (!cache) return;
+  drawFindings(findings);
   drawTiles(cache.tiles);
   drawTrend(cache.series);
   drawSignal(cache.signalSeries);
@@ -151,6 +156,13 @@ function drawAll() {
 }
 
 // ------------------------------------------------------------------ status tiles
+function smallSampleHint() {
+  if (state.segment !== "All") return "Try Business unit: All.";
+  if (state.country !== "ALL") return "Try Country: All countries.";
+  if (state.grain !== "year") return "Try Period: Year.";
+  return "";
+}
+
 function drawTiles(rows) {
   const scope = `${countryName(state.country)}${state.segment === "All" ? "" : ` · ${state.segment}`}`;
   $("tiles").replaceChildren(...meta.objectives.map((o) => {
@@ -161,20 +173,135 @@ function drawTiles(rows) {
         h("div", { class: "empty", text: "No measured period for this selection yet." })]);
     }
     const st = STATUS[r.status];
-    const unit = o.measure === "cohort_retention" ? `${num(r.denominator)} hires`
-      : `average headcount ${num(r.denominator)}`;
+    const cohort = o.measure === "cohort_retention";
+    const who = cohort ? (o.objective_id === "SENIOR_HIRE_12M" ? "senior hires" : "hires") : "people in the average workforce";
+    const tooFew = r.status === "insufficient_sample";
+    const pending = r.pending_periods ? ` · ${r.pending_periods} later period(s) pending` : "";
+    const details = tooFew
+      ? [`Not judged: only ${num(r.denominator)} ${who} in this slice, and ${meta.min_sample} are needed. ${smallSampleHint()}`.trim(),
+        `The rate is shown for reference only${pending}.`]
+      : [CONFIDENCE[r.confidence],
+        `95% interval ${pct(r.ci_low)} – ${pct(r.ci_high)} · ${num(r.denominator)} ${who}${pending}`];
     return h("article", { class: `tile ${r.status}`, "aria-label": `${o.name}: ${pct(r.rate)}, ${st.label}` }, [
       h("h3", { text: o.name }),
       h("p", { class: "period", text: `${periodLabel(r.period_start, state.grain, o)} · ${scope}` }),
-      h("p", { class: "value", text: pct(r.rate) }),
+      h("p", { class: `value${tooFew ? " not-judged" : ""}`, text: pctVs(r.rate, o.target) }),
       h("p", { class: "target", text: targetLabel(o) }),
       h("span", { class: `badge ${r.status}` }, [h("span", { class: "icon", "aria-hidden": "true", text: st.icon }),
         h("span", { text: st.label })]),
-      h("p", { class: "detail", text: r.confidence ? CONFIDENCE[r.confidence] : "Interval not assessed: sample too small." }),
-      h("p", { class: "detail", text: `95% interval ${pct(r.ci_low)} – ${pct(r.ci_high)} · ${unit}` +
-        (r.pending_periods ? ` · ${r.pending_periods} later period(s) pending` : "") }),
+      ...details.map((text) => h("p", { class: "detail", text })),
     ]);
   }));
+}
+
+// ------------------------------------------------------------------ key findings
+// Verdict from the 95% interval against the target: the same rule as the status cards.
+function verdict(o, rate, lo, hi) {
+  const good = o.direction === "at_least" ? lo >= o.target : hi <= o.target;
+  const bad = o.direction === "at_least" ? hi < o.target : lo > o.target;
+  const met = o.direction === "at_least" ? rate >= o.target : rate <= o.target;
+  if (good) return { cls: "met", icon: "✓", label: "Clearly met" };
+  if (bad) return { cls: "not_met", icon: "✕", label: "Clearly missed" };
+  return met ? { cls: "met", icon: "≈", label: "Met, on the line" }
+    : { cls: "not_met", icon: "≈", label: "Missed, on the line" };
+}
+
+function findingCard(n, tag, v, title, metric, sub, text, preset, anchor) {
+  const button = h("button", { type: "button", class: "btn-secondary", text: "Show me",
+    "aria-label": `Show finding ${n} on the dashboard` });
+  button.addEventListener("click", () => applyPreset(preset, anchor));
+  return h("article", { class: `finding ${v.cls}`, "aria-label": `Finding ${n}: ${title}, ${v.label}` }, [
+    h("p", { class: "f-tag", text: `Finding ${n} · ${tag}` }),
+    h("h3", { text: title }),
+    h("p", { class: "f-metric", text: metric }),
+    h("p", { class: "f-sub", text: sub }),
+    h("span", { class: `badge ${v.cls}` }, [h("span", { class: "icon", "aria-hidden": "true", text: v.icon }),
+      h("span", { text: v.label })]),
+    h("p", { class: "f-text", text }),
+    button,
+  ]);
+}
+
+function applyPreset(preset, anchor) {
+  Object.assign(state, { country: "ALL", segment: "All", grain: "year", variant: "main" }, preset);
+  syncFilters();
+  refresh();
+  const target = $(anchor);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  target.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+  const heading = target.querySelector("h2");
+  heading.setAttribute("tabindex", "-1");
+  heading.focus({ preventScroll: true });
+}
+
+function drawFindings(f) {
+  const spec = (id) => meta.objectives.find((o) => o.objective_id === id);
+  const pooled = (id, variant = "main") => f.pooled.find((p) => p.objective_id === id && p.variant === variant);
+  const years = (p) => `${p.first_year}–${p.last_year} hires`;
+  const signalName = (id) => meta.signals.find((x) => x.indicator_id === id)?.title.split(",")[0].toLowerCase() ?? id;
+  const cards = [];
+
+  const senior = pooled("SENIOR_HIRE_12M");
+  const seniorWide = pooled("SENIOR_HIRE_12M", "sensitivity_manager");
+  if (senior) {
+    const o = spec("SENIOR_HIRE_12M");
+    const below = senior.yearly_rates.every((r) => r < o.target);
+    const wide = seniorWide
+      ? ` Counting Managers as senior: ${pct(seniorWide.rate)}, ${verdict(o, seniorWide.rate, seniorWide.ci_low, seniorWide.ci_high).label.toLowerCase()}.`
+      : "";
+    cards.push(findingCard(1, "senior hires kept 12 months", verdict(o, senior.rate, senior.ci_low, senior.ci_high),
+      targetLabel(o), pct(senior.rate),
+      `95% interval ${pct(senior.ci_low)} – ${pct(senior.ci_high)} · ${num(senior.denominator)} ${years(senior)}`,
+      `${below ? "Below target in every year" : "Mixed across years"} (${senior.yearly_rates.map((r) => pct(r)).join(", ")}).${wide}`,
+      { objective: "SENIOR_HIRE_12M" }, "understand"));
+  }
+
+  const hire = pooled("NEW_HIRE_6M");
+  if (hire) {
+    const o = spec("NEW_HIRE_6M");
+    const v = verdict(o, hire.rate, hire.ci_low, hire.ci_high);
+    const why = v.label.includes("on the line")
+      ? "The interval includes the target, so chance alone could flip the verdict."
+      : "The whole interval is on one side of the target.";
+    cards.push(findingCard(2, "new hires kept 6 months", v, targetLabel(o), pct(hire.rate),
+      `95% interval ${pct(hire.ci_low)} – ${pct(hire.ci_high)} · ${num(hire.denominator)} ${years(hire)}`,
+      `${why} No country or business unit is a reliable outlier.`,
+      { objective: "NEW_HIRE_6M" }, "understand"));
+  }
+
+  const t = f.turnover.filter((y) => y.rate !== null);
+  if (t.length) {
+    const o = spec("REGRETTED_TURNOVER_12M");
+    const last = t.at(-1);
+    const prev = t.at(-2);
+    const allMet = t.every((y) => y.status === "met");
+    const clear = t.every((y) => y.confidence === "clear");
+    const v = allMet && clear ? { cls: "met", icon: "✓", label: "Within limit" } : verdict(o, last.rate, last.ci_low, last.ci_high);
+    const rise = prev && last.rate > prev.rate
+      ? `, but ${last.year} rose to ${pct(last.rate)} (${num(last.numerator)} regretted exits vs ${num(prev.numerator)}).`
+      : ".";
+    cards.push(findingCard(3, "regretted turnover, 12 months", v, targetLabel(o),
+      `${pct(Math.min(...t.map((y) => y.rate)))} – ${pct(Math.max(...t.map((y) => y.rate)))}`,
+      t.map((y) => `${y.year} ${pct(y.rate)}`).join(" · "),
+      `${allMet ? "Within the limit every year" : "Above the limit in some years"}${rise}`,
+      { objective: "REGRETTED_TURNOVER_12M" }, "understand"));
+  }
+
+  const s = f.strongest;
+  const found = f.association_significant > 0;
+  const hint = s
+    ? `Strongest hint: ${signalName(s.indicator_id)} and ${spec(f.strongest_objective).name.toLowerCase()} ` +
+      `(odds ratio ${s.odds_ratio.toFixed(2)}, p ${s.p_value.toFixed(2)}), ` +
+      (found ? "significant after correction. Association is not causation."
+        : `not significant once all ${f.association_tests} tests are accounted for. Association is not causation.`)
+    : "";
+  cards.push(findingCard(4, "external signals",
+    found ? { cls: "met", icon: "!", label: `${f.association_significant} linked` } : { cls: "none", icon: "○", label: "No link found" },
+    "Any link to leaving?", `${f.association_significant} of ${f.association_tests}`,
+    `tests significant after correction · smallest q ${f.smallest_q === null ? "–" : f.smallest_q.toFixed(2)}`,
+    hint, s ? { objective: f.strongest_objective, signal: s.indicator_id } : {}, "challenge"));
+
+  $("findings-grid").replaceChildren(...cards);
 }
 
 // ------------------------------------------------------------------ trend

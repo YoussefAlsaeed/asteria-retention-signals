@@ -195,3 +195,34 @@ def test_no_serious_accessibility_violations(browser: Browser, base_url: str, sc
         ],
         indent=2,
     )
+
+
+def test_key_findings_panel_shows_four_findings(page: Page, base_url: str) -> None:
+    loaded(page, base_url)
+    cards = page.locator("#findings-grid .finding")
+    expect(cards).to_have_count(4)
+    expect(cards.nth(0)).to_contain_text("78.6%")
+    expect(cards.nth(0).locator(".badge")).to_contain_text("Clearly missed")
+    expect(cards.nth(1)).to_contain_text("86.8%")
+    expect(cards.nth(3)).to_contain_text("0 of 15")
+
+
+def test_show_me_sets_the_filters_for_that_finding(page: Page, base_url: str) -> None:
+    loaded(page, f"{base_url}/?objective=NEW_HIRE_6M&country=GR&grain=month")
+    page.get_by_role("button", name="Show finding 1 on the dashboard").click()
+    expect(page.locator("#f-objective")).to_have_value("SENIOR_HIRE_12M")
+    expect(page.locator("#f-country")).to_have_value("ALL")
+    expect(page.locator("#f-grain")).to_have_value("year")
+    assert "objective=SENIOR_HIRE_12M" in page.url
+    expect(page.locator("#h-understand")).to_be_focused()
+    page.get_by_role("button", name="Show finding 4 on the dashboard").click()
+    expect(page.locator("#f-signal")).to_have_value("economic_sentiment")
+    expect(page.locator("#h-challenge")).to_be_focused()
+
+
+def test_small_slices_say_why_they_are_not_judged(page: Page, base_url: str) -> None:
+    loaded(page, f"{base_url}/?country=IE&segment=Sales&grain=year")
+    senior = page.locator("#tiles .tile", has_text="Senior-hire")
+    expect(senior.locator(".badge")).to_contain_text("Too few people")
+    expect(senior).to_contain_text("30 are needed")
+    expect(senior).to_contain_text("Try Business unit: All.")

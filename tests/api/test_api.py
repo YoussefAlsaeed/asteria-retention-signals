@@ -120,5 +120,22 @@ def test_unexpected_error_is_500_without_internals(
 
 def test_api_responses_are_not_cached_and_dashboard_is_served(client: TestClient) -> None:
     assert client.get("/api/meta").headers["cache-control"] == "no-store"
+    assert client.get("/js/app.js").headers["cache-control"] == "no-cache"  # never stale
     page = client.get("/")
     assert page.status_code == 200 and "Retention signals" in page.text
+
+
+def test_findings_match_the_documented_headlines(client: TestClient) -> None:
+    """docs/findings.md quotes these numbers; the dashboard panel must show the same."""
+    body = client.get("/api/findings").json()
+    pooled = {(p["objective_id"], p["variant"]): p for p in body["pooled"]}
+    senior = pooled[("SENIOR_HIRE_12M", "main")]
+    assert (senior["numerator"], senior["denominator"]) == (209, 266)
+    assert (senior["first_year"], senior["last_year"]) == (2021, 2024)  # complete years only
+    assert round(senior["ci_high"], 3) == 0.831  # below 90%: clearly missed
+    hire = pooled[("NEW_HIRE_6M", "main")]
+    assert (hire["numerator"], hire["denominator"]) == (1423, 1640)
+    assert hire["ci_low"] < 0.86 < hire["ci_high"]  # on the line
+    assert [t["year"] for t in body["turnover"]] == [2021, 2022, 2023, 2024, 2025]
+    assert (body["association_tests"], body["association_significant"]) == (15, 0)
+    assert body["strongest"]["indicator_id"] == "economic_sentiment"

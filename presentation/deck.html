@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>External signals × workforce retention: presentation</title>
+<style>
+  :root { --ink:#10253f; --soft:#40546b; --muted:#5b6d7c; --paper:#f4f7f8; --line:#d9e3e8; --teal:#087e78;
+    --teal-dark:#075f5c; --teal-pale:#dff3f0; --coral:#ef6a5b; --coral-pale:#fff0ed; --amber:#c47b08;
+    --amber-pale:#fff5d9; --navy:#10253f; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #0b1624; }
+  body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); overflow: hidden; }
+  #stage { position: absolute; top: 50%; left: 50%; width: 1280px; height: 720px; transform-origin: center; }
+  .slide { position: absolute; inset: 0; display: none; flex-direction: column; background: var(--paper);
+    background-image: radial-gradient(circle at 4% 0%, rgba(8,126,120,.10), transparent 22rem),
+                      radial-gradient(circle at 96% 10%, rgba(239,106,91,.08), transparent 20rem);
+    padding: 44px 56px 36px; overflow: hidden; }
+  .slide.active { display: flex; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .section { display: inline-flex; gap: 10px; align-items: center; font-size: 13px; font-weight: 820;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--teal-dark); }
+  .section .n { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 7px; color: #fff; background: var(--teal); font-size: 11px; }
+  .time { font-size: 12px; color: var(--muted); font-weight: 700; }
+  h1 { margin: 0; font-size: 44px; letter-spacing: -.035em; line-height: 1.08; }
+  h2 { margin: 0 0 6px; font-size: 34px; letter-spacing: -.03em; line-height: 1.1; }
+  .lede { margin: 0 0 18px; color: var(--soft); font-size: 18px; max-width: 70ch; }
+  .grid { display: grid; gap: 16px; }
+  .g2 { grid-template-columns: 1fr 1fr; } .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+  .card h3 { margin: 0 0 6px; font-size: 18px; }
+  .card p, .card li { margin: 3px 0; font-size: 15px; color: var(--soft); line-height: 1.45; }
+  .card ul { margin: 4px 0 0; padding-left: 18px; }
+  .card strong, td strong { color: var(--ink); }
+  .card.teal { border-left: 5px solid var(--teal); } .card.coral { border-left: 5px solid var(--coral); }
+  .card.amber { border-left: 5px solid var(--amber); } .card.navy { border-left: 5px solid var(--navy); }
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  th, td { padding: 8px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: #f5f8fa; font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink); }
+  td { color: var(--soft); } td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: 0; }
+  .card .big, .big { font-size: 40px; font-weight: 780; letter-spacing: -.03em; color: var(--ink); margin: 2px 0; }
+  .card .sub, .sub { font-size: 13.5px; color: var(--muted); margin: 0 0 8px; }
+  .badge { display: inline-block; font-size: 12px; font-weight: 820; letter-spacing: .05em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 999px; background: #eef3f5; }
+  .bad { color: #b42323; } .ok { color: #006300; } .warn { color: #7a4d05; } .none { color: var(--navy); }
+  .callout { border-radius: 12px; padding: 12px 16px; background: var(--teal-pale); border: 1px solid #aadbd6; color: #084f4c; font-size: 15px; }
+  .callout.coral { background: var(--coral-pale); border-color: #f2beb6; color: #7c2e24; }
+  .callout.amber { background: var(--amber-pale); border-color: #ecd59c; color: #65440a; }
+  .pipeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .step { background: var(--navy); color: #fff; border-radius: 14px; padding: 14px; position: relative; min-height: 210px; }
+  .step:not(:last-child)::after { content: "→"; position: absolute; right: -12px; top: 44%; color: var(--teal);
+    background: var(--paper); font-weight: 900; width: 16px; text-align: center; }
+  .step strong { display: block; color: #84ded6; font-size: 16px; margin-bottom: 4px; }
+  .step code { display: block; color: #cbd8e4; font-size: 11.5px; margin-bottom: 8px; font-family: ui-monospace, Consolas, monospace; }
+  .step span { color: #d7e3ea; font-size: 13.5px; line-height: 1.45; display: block; }
+  img.shot { width: 100%; border-radius: 12px; border: 1px solid var(--line); box-shadow: 0 8px 24px rgba(16,37,63,.10); display: block; }
+  .fill { flex: 1; min-height: 0; }
+  .title-slide { background: linear-gradient(125deg, rgba(16,37,63,.98), rgba(9,71,82,.95)); color: #fff; justify-content: center; }
+  .title-slide .eyebrow { color: #89ddd5; font-size: 14px; font-weight: 820; letter-spacing: .14em; text-transform: uppercase; margin: 0 0 14px; }
+  .title-slide h1 { font-size: 64px; }
+  .title-slide p { color: #d9e8ee; font-size: 20px; max-width: 60ch; }
+  .pills { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
+  .pill { border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.08); border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 15px; }
+  .footer { margin-top: auto; padding-top: 10px; display: flex; justify-content: space-between; font-size: 11.5px; color: var(--muted); }
+  .plain { margin-top: auto; padding: 10px 16px; border-radius: 12px; background: #fff; border: 1px dashed #9fb3c0;
+    font-size: 15px; color: var(--ink); }
+  .plain b { color: var(--teal-dark); letter-spacing: .04em; text-transform: uppercase; font-size: 12px; margin-right: 8px; }
+  .explain { display: grid; grid-template-columns: 170px 1fr; gap: 0; background: #fff; border: 1px solid var(--line);
+    border-radius: 12px; overflow: hidden; }
+  .explain div { padding: 9px 14px; border-bottom: 1px solid var(--line); font-size: 14.5px; color: var(--soft); line-height: 1.4; }
+  .explain div:nth-child(odd) { font-weight: 780; color: var(--ink); background: #f5f8fa; }
+  .explain div:nth-last-child(-n+2) { border-bottom: 0; }
+  .qbox { background: var(--navy); color: #fff; border-radius: 14px; padding: 16px 20px; font-size: 20px; line-height: 1.4; }
+  .qbox small { display: block; color: #89ddd5; font-size: 12px; font-weight: 820; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; }
+  .notes { display: none; }
+  #notes { position: fixed; left: 0; right: 0; bottom: 0; max-height: 34vh; overflow: auto; background: #fff; color: var(--ink);
+    padding: 14px 22px; font-size: 16px; line-height: 1.5; border-top: 4px solid var(--teal); display: none; }
+  #notes.show { display: block; }
+  #hint { position: fixed; right: 12px; top: 10px; color: #93a7b8; font-size: 12px; }
+  @media print {
+    html, body { background: #fff; overflow: visible; height: auto; }
+    #stage { position: static; transform: none !important; width: 1280px; height: auto; }
+    .slide { display: flex !important; position: relative; width: 1280px; height: 720px; page-break-after: always; break-after: page; }
+    #notes, #hint { display: none !important; }
+    @page { size: 1280px 720px; margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- 1 ---------------------------------------------------------------- -->
+<section class="slide title-slide">
+  <p class="eyebrow">Agentic engineering assessment · software emphasis</p>
+  <h1>External signals ×<br>workforce retention</h1>
+  <p>Asteria Consumer Products (fictional). How three retention targets are performing, and whether the economy adds useful context.</p>
+  <div class="pills">
+    <span class="pill">One command, runs offline</span><span class="pill">5 public signals, 2 providers</span>
+    <span class="pill">128 automated tests</span><span class="pill">Every number re-derived: 107 / 107</span>
+  </div>
+  <p style="margin-top:34px;font-size:16px;color:#cbd8e4">Youssef Alsaeed</p>
+  <div class="notes">Opening (15s). One sentence on what this is: a small, defensible data product, not just a dashboard. Then go straight into how I narrowed the question.</div>
+</section>
+
+<!-- 2 ---------------------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">1</span>Problem refinement and scope</span><span class="time">3 min</span></div>
+  <h2>The question, narrowed</h2>
+  <p class="lede">Decision supported: <strong>which retention target needs leadership attention, and does the economy explain it?</strong></p>
+  <table>
+    <tr><th>Target</th><th class="num">Goal</th><th>How I defined it</th><th>Open question → assumption</th></tr>
+    <tr><td><strong>New hires kept 6 months</strong></td><td class="num">≥ 86%</td><td>Hires grouped by month from Jan 2021; "lost" = left before the 6-month anniversary</td><td>Calendar months; unfinished groups are <em>pending</em>, never "retained"</td></tr>
+    <tr><td><strong>Senior hires kept 12 months</strong></td><td class="num">≥ 90%</td><td>Same rule, 12 months, Senior Leader only</td><td>Who is senior? → Senior Leader (+ "Sr Mgmt" alias); Managers as a sensitivity check</td></tr>
+    <tr><td><strong>Regretted turnover, trailing 12 months</strong></td><td class="num">≤ 7.5%</td><td>Regretted exits ÷ average of the 12 month-end headcounts</td><td>Denominator convention → mean of month-end headcounts</td></tr>
+  </table>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card teal"><h3>Clarification round</h3><p>10 candidate questions drafted, cut to the <strong>3 that can flip a result</strong>; the other 7 recorded as assumptions. Every assumption is a switch in <code>config/analysis.yaml</code>.</p></div>
+    <div class="card coral"><h3>Deliberately out of scope</h3><p>Forecasting, causal claims, individual-level drivers (pay, manager), per-country publication lags. <strong>Depth over surface area.</strong></p></div>
+  </div>
+  <div class="notes">(75s) The brief grades narrowing. The three targets each hide a definition choice; I asked only the three questions that could change a verdict and wrote defaults for the rest. Point out: senior finding holds under both definitions, so the open question doesn't block the conclusion.</div>
+</section>
+
+<!-- 3 ---------------------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">1</span>Problem refinement and scope</span><span class="time">3 min</span></div>
+  <h2>The data is deliberately imperfect: nothing is dropped silently</h2>
+  <p class="lede">23 quality rules, each with a severity that decides the row's fate. Counts reconciled with an independent profiling script.</p>
+  <div class="grid g2">
+    <table>
+      <tr><th>Issue found</th><th class="num">Rows</th><th>What happened</th></tr>
+      <tr><td>Exact duplicates</td><td class="num">7</td><td>Removed</td></tr>
+      <tr><td>Country "EL" / "ROM"</td><td class="num">8</td><td>Mapped to GR / RO (EL is Eurostat's own code)</td></tr>
+      <tr><td>Blank country</td><td class="num">9</td><td>Company-wide figures only</td></tr>
+      <tr><td>"Sr Mgmt" level</td><td class="num">10</td><td>Mapped to Senior Leader (assumption)</td></tr>
+      <tr><td>No hire date / left before hired</td><td class="num">5 + 5</td><td>Excluded from all measures</td></tr>
+      <tr><td>Exit with no exit type</td><td class="num">13</td><td>Counted as an exit, never as regretted</td></tr>
+      <tr><td>"End of Contract" on a Permanent</td><td class="num">90</td><td>Kept, flagged</td></tr>
+      <tr><td>Voluntary exit, regretted unknown</td><td class="num">2</td><td>Main: not regretted; upper bound: regretted</td></tr>
+    </table>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card navy"><p class="big">2,407 → 2,400 → 2,390</p><p>rows read → people → measurable. 2,381 have a known country.</p></div>
+      <div class="card amber"><h3>The trap: recent hires</h3><p>Someone hired in October 2025 hasn't had 6 months yet. Counting them as "stayed" would inflate retention, so their group is <strong>pending</strong>. That's why every hire-based headline covers <strong>2021–2024</strong>.</p></div>
+      <div class="card"><h3>Also found</h3><p>Nobody was hired before 2020, so headcount grows from 0 to ~1,600, which matters for reading turnover trends.</p></div>
+    </div>
+  </div>
+  <p class="plain"><b>In plain words</b>We never quietly delete a messy row: each problem has a rule, and every rule's count is published.</p>
+  <div class="notes">(90s) Emphasise "profile before trusting": my agent's first defect list came from reading the generator code; profiling corrected three overstatements and found the 90 End-of-Contract rows it missed. Censoring is the main analytical trap in this brief.</div>
+</section>
+
+<!-- 4 ---------------------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">2</span>Architecture, lineage, reliability</span><span class="time">5 min</span></div>
+  <h2>One vertical slice, one command: <code style="font-size:26px">uv run asteria run</code></h2>
+  <p class="lede">Each stage is a separate module with its own tests; the core runs offline from committed snapshots in about 20 seconds.</p>
+  <div class="pipeline">
+    <div class="step"><strong>Research</strong><code>docs/source_register.md</code><span>5 signals, 4 lenses, 2 providers (Eurostat, World Bank), CC BY 4.0. Every dataset code checked on the live API.</span></div>
+    <div class="step"><strong>Ingest</strong><code>sources/ · ingest/</code><span>One adapter per provider behind one interface. Timeouts, retries, contract checks. Byte-exact snapshots and offline replay.</span></div>
+    <div class="step"><strong>Curate</strong><code>curate/sql/*.sql</code><span>Plain SQL in DuckDB. Canonical countries and periods, 23 quality rules, a quality gate that fails the run.</span></div>
+    <div class="step"><strong>Analyse</strong><code>analytics/</code><span>Target measures with 95% intervals, time-safe signal join (<code style="display:inline;color:#cbd8e4">ASOF JOIN</code>), 15 logistic models.</span></div>
+    <div class="step"><strong>Explain</strong><code>api/ · dashboard/</code><span>FastAPI read-only service and an accessible HTML/SVG dashboard. No build step, no CDN.</span></div>
+  </div>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card teal"><h3>Adapters</h3><p>Adding a provider = one class with <code>build_request</code> and <code>parse</code>, plus config. No pipeline changes.</p></div>
+    <div class="card teal"><h3>Domain boundaries</h3><p>Objective rules and targets in <code>domain/</code> with no I/O; targets read from the starter file, never restated.</p></div>
+    <div class="card teal"><h3>Configuration</h3><p>Indicators, lags, aliases, definitions in <code>config/*.yaml</code>, validated at start-up with clear errors.</p></div>
+  </div>
+  <div class="notes">(75s) Walk left to right. For software emphasis stress the adapter interface, the domain layer without I/O, and config-driven behaviour. If asked, open src/asteria/sources/base.py to show the Protocol.</div>
+</section>
+
+<!-- 5 ---------------------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">2</span>Architecture, lineage, reliability</span><span class="time">5 min</span></div>
+  <h2>Lineage: every value can be traced back to its source bytes</h2>
+  <table style="margin-top:6px">
+    <tr><th>Layer</th><th>Where</th><th>What it holds</th><th>Proof it's faithful</th></tr>
+    <tr><td><strong>Raw</strong></td><td>data/raw-or-fixtures/</td><td>Starter CSVs + API payloads, exactly as received</td><td>SHA-256 per file, checked by tests; <code>.gitattributes</code> stops line-ending edits</td></tr>
+    <tr><td><strong>Source-shaped</strong></td><td>DuckDB stg_*</td><td>Provider codes and period strings, untyped</td><td>Parsed only after a contract check (schema drift is an error)</td></tr>
+    <tr><td><strong>Canonical</strong></td><td>employees, external_observations</td><td>ISO countries, real period dates, quality flags</td><td>Lineage columns: source, dataset, period, loaded_at, snapshot sha</td></tr>
+    <tr><td><strong>Analytical product</strong></td><td>mart_*</td><td>Rates + intervals per country × unit × period; signals as known at the time; model results</td><td>Recomputed by separate code: <strong>107 / 107 match</strong></td></tr>
+  </table>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card"><h3>Deterministic</h3><p>Reruns are <strong>byte-identical</strong>, including from a clean clone.</p></div>
+    <div class="card"><h3>Idempotent</h3><p>A second live ingest reports every source <strong>unchanged</strong>; nothing is rewritten.</p></div>
+    <div class="card"><h3>Schema drift caught</h3><p>Eurostat renamed <code>nace_r2</code> to <code>nace_r2_1</code>: the adapter treats a missing dimension as a contract error.</p></div>
+  </div>
+  <p class="plain"><b>In plain words</b>For any number on the dashboard we can point to the exact downloaded file, and the exact rows, it came from.</p>
+  <div class="notes">(60s) Lineage is a graded dimension. Show one row of external_observations with its snapshot_sha256 if there's time. The byte-identical clean-clone rebuild is strong reproducibility evidence.</div>
+</section>
+
+<!-- 6 ---------------------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">2</span>Architecture, lineage, reliability</span><span class="time">5 min</span></div>
+  <h2>No future information: a value is used only after it was published</h2>
+  <div class="grid g2" style="margin-top:6px">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <table>
+        <tr><th>Signal</th><th class="num">Lag</th><th>Real releases (spot check)</th></tr>
+        <tr><td>Unemployment</td><td class="num">62 d</td><td>30–33 days after month end</td></tr>
+        <tr><td>Job vacancies</td><td class="num">90 d</td><td>75–79 days after quarter end</td></tr>
+        <tr><td>Inflation</td><td class="num">25 d</td><td>17–24 days (January latest)</td></tr>
+        <tr><td>Economic sentiment</td><td class="num">10 d</td><td>Before month end, <strong>except December: 5–8 Jan</strong></td></tr>
+        <tr><td>GDP growth</td><td class="num">200 d</td><td>Enters World Bank data on 1 July</td></tr>
+      </table>
+      <div class="callout coral"><strong>Leak found and fixed:</strong> sentiment originally had a 0-day lag, so December values were used from 1 January, 5–8 days before publication (4,861 person-months). Fixed to 10 days; the conclusion didn't change.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card"><h3>What Greece "knew" on 1 June 2023</h3>
+        <table style="border:0"><tr><th>Signal</th><th>Value</th><th>Describes</th><th class="num">Age</th></tr>
+          <tr><td>Sentiment</td><td>108.0</td><td>Apr 2023</td><td class="num">32 d</td></tr>
+          <tr><td>Unemployment</td><td>11.4%</td><td>Mar 2023</td><td class="num">62 d</td></tr>
+          <tr><td>Vacancies</td><td>0.9%</td><td>Q4 2022</td><td class="num">152 d</td></tr>
+          <tr><td>GDP growth</td><td>8.7%</td><td><strong>year 2021</strong></td><td class="num">517 d</td></tr></table>
+        <p style="margin-top:8px">Frequency integrity: an annual figure stays <strong>labelled as its own year and age</strong>, never shown as a monthly measurement.</p></div>
+      <div class="callout amber">Why it matters: the naive "same month" join produced the <strong>strongest-looking result (p = 0.010)</strong>. Leakage makes weak patterns look real.</div>
+    </div>
+  </div>
+  <p class="plain"><b>In plain words</b>The analysis may only use economic news that had actually been published by that date, like reading yesterday's paper, never tomorrow's.</p>
+  <div class="notes">(75s) This is the brief's non-negotiable. Tell the leak story honestly: the lags were first estimated from one snapshot; when challenged, I spot-checked against official release dates and found December sentiment was used before publication. Fixed, re-run, conclusion unchanged, logged in AI_USAGE.</div>
+</section>
+
+<!-- 7 ---------------------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">2</span>Architecture, lineage, reliability</span><span class="time">5 min</span></div>
+  <h2>Reliability and engineering</h2>
+  <div class="grid g2" style="margin-top:8px">
+    <div class="card teal"><h3>Failure handling</h3><ul>
+      <li>Transient errors (timeouts, 429, 5xx) retried with backoff; 4xx fail fast with the provider's message</li>
+      <li>One failing source never stops or corrupts the others; its last good snapshot is kept</li>
+      <li>A payload that breaks the contract never replaces good evidence</li>
+      <li>API error contract: 404 / 422 (lists allowed values) / 503 "run <code>asteria run</code>" / 500 with request id, no internals</li></ul></div>
+    <div class="card teal"><h3>Observability</h3><ul>
+      <li>Readable logs in a terminal, JSON when piped or scheduled</li>
+      <li>Run manifest per ingest: attempts, checksums, coverage, warnings</li>
+      <li>Quality report with every rule and its row count</li>
+      <li>Dashboard "Trust" view: freshness, gaps, provider flags</li></ul></div>
+  </div>
+  <table style="margin-top:14px">
+    <tr><th>Test layer</th><th>What it proves</th></tr>
+    <tr><td><strong>Unit + contract</strong></td><td>Parsers, JSON-stat decoding, retries, raw store, config validation</td></tr>
+    <tr><td><strong>SQL / metrics</strong></td><td>Hand-computed cases: anniversary boundary, pending, headcount, Wilson interval, no-leak and period rules</td></tr>
+    <tr><td><strong>Statistics</strong></td><td>Known-answer tests: finds a planted effect; not fooled by country confounding</td></tr>
+    <tr><td><strong>API + UI</strong></td><td>Every endpoint and error; Playwright browser tests incl. empty/error states; <strong>axe accessibility audit</strong> in both themes</td></tr>
+  </table>
+  <p class="sub" style="margin-top:10px">128 tests on Python 3.13 and 3.11 · strict mypy · ruff · tests validated by injecting bugs on purpose (each was caught)</p>
+  <div class="notes">(45s) Don't read the list. Pick two: the known-answer statistics tests and the axe audit that caught real contrast failures. Mention the mutation checks: I broke code on purpose to prove the tests catch it.</div>
+</section>
+
+<!-- 8 ---------------------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">2</span>Architecture, lineage, reliability</span><span class="time">5 min</span></div>
+  <h2>Production mapping: ADF · Databricks · Power BI</h2>
+  <table style="margin-top:6px">
+    <tr><th>Concern</th><th>Local (built)</th><th>Production (proposal)</th></tr>
+    <tr><td><strong>Orchestration</strong></td><td>asteria run</td><td>ADF pipeline: ingest → Databricks jobs (curate, analyse) → Power BI refresh</td></tr>
+    <tr><td><strong>Scheduling</strong></td><td>Manual</td><td>Monthly trigger after the latest release + event trigger on a new HR extract</td></tr>
+    <tr><td><strong>Storage</strong></td><td>Files + DuckDB</td><td>ADLS Gen2, bronze / silver / gold Delta tables in Unity Catalog</td></tr>
+    <tr><td><strong>Secrets</strong></td><td>None needed</td><td>Azure Key Vault via managed identities; Key Vault-backed Databricks secret scopes</td></tr>
+    <tr><td><strong>Observability</strong></td><td>JSON logs, manifest, quality report</td><td>Log Analytics; manifest and quality as Delta tables; alerts on failure, gate, staleness</td></tr>
+    <tr><td><strong>Access control</strong></td><td>Local</td><td>Unity Catalog grants (person-level HR restricted); Power BI row-level security by country</td></tr>
+    <tr><td><strong>Promotion</strong></td><td>Git</td><td>Dev → Test → Prod; Databricks Asset Bundles + ADF ARM; CI runs ruff, mypy, pytest per PR</td></tr>
+  </table>
+  <div class="callout" style="margin-top:14px">Carries over unchanged: adapters, domain rules, SQL, config, tests. Changes for real HR data: pseudonymised IDs, incremental <code>MERGE</code> instead of full rebuild, retention policy. Details: <code>docs/architecture.md</code>.</div>
+  <div class="notes">(45s) This is a design, not built; say so. Key message: the business logic is portable because it's plain SQL + a Python package; only orchestration, storage and serving change.</div>
+</section>
+
+<!-- 9 ---------------------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">3</span>Dashboard and key findings</span><span class="time">4 min</span></div>
+  <h2>The dashboard: findings first, then prove them</h2>
+  <div class="grid" style="grid-template-columns: 1.6fr 1fr; align-items:start">
+    <img class="shot" src="assets/findings.png" alt="Key findings panel of the dashboard">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="card teal"><h3>Explore</h3><p>Objective, country, business unit, period, definition, signal. Kept in the URL.</p></div>
+      <div class="card teal"><h3>Understand</h3><p>Trend with 95% band and target line, next to the signal as known each month.</p></div>
+      <div class="card teal"><h3>Challenge</h3><p>Country-quarter scatter sized by sample; naive vs within-country tests.</p></div>
+      <div class="card teal"><h3>Trust</h3><p>Freshness, coverage, exclusions, sources, method.</p></div>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:10px">Accessible by design: keyboard-readable charts, a table for every chart, status as icon + text, validated colour-blind palette, graceful empty / pending / "too few people" / API-down states.</p>
+  <div class="notes">(40s) Live demo if possible: "uv run asteria serve", then use the Show me buttons for findings 1 to 4. Mention "Too few people": groups under 30 are never judged; senior hires per country are only 5 to 19 a year.</div>
+</section>
+
+<!-- 10a: reading the numbers ---------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">3</span>Dashboard and key findings</span><span class="time">4 min</span></div>
+  <h2>Reading the numbers, in plain words</h2>
+  <p class="lede">Every figure on the next slides is one of these. Example used throughout: senior hires in 2024.</p>
+  <div class="explain">
+    <div>Rate</div><div>Of the <strong>63</strong> senior people hired in 2024, <strong>51</strong> were still here 12 months later: 51 ÷ 63 = <strong>81.0%</strong>.</div>
+    <div>Pooled</div><div>Add the complete years together (people, not percentages): 209 stayed of 266 hired in 2021–2024 = <strong>78.6%</strong>.</div>
+    <div>95% interval</div><div>How sure we are. With only 63 people the true rate could plausibly be anywhere from <strong>69.6% to 88.8%</strong>; more people give a narrower range.</div>
+    <div>"Clearly" vs "on the line"</div><div><strong>Clearly</strong>: the whole range is on one side of the target. <strong>On the line</strong>: the range includes the target, so chance alone could flip the verdict.</div>
+    <div>Pending</div><div>Too early to judge: hired less than 6 or 12 months before the data ends. Never counted as "stayed".</div>
+    <div>Too few people</div><div>Fewer than 30 people in a group: shown, but not judged. One person leaving would move the rate by more than 3 points.</div>
+    <div>Turnover</div><div>Regretted exits in a year ÷ the average of that year's 12 month-end headcounts: 82 ÷ 1,609.7 = <strong>5.1%</strong> in 2025.</div>
+  </div>
+  <div class="notes">(30s, optional) Use this slide only if the audience needs it; otherwise refer back to it during Q&A. The one idea to land: "clearly" means even the optimistic end of the range misses the target.</div>
+</section>
+
+<!-- 10 --------------------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">3</span>Dashboard and key findings</span><span class="time">4 min</span></div>
+  <h2>Findings 1–3: how the targets are doing</h2>
+  <div class="grid g3" style="margin-top:6px">
+    <div class="card coral"><p class="sub">Finding 1 · senior hires kept 12 months · target ≥ 90%</p><p class="big">78.6%</p>
+      <p class="sub">95% interval 73.3–83.1% · 209 of 266 hires, 2021–2024</p><span class="badge bad">✕ Clearly missed</span>
+      <ul><li>Below target <strong>every year</strong>: 73.9, 78.9, 80.6, 81.0%</li><li>Counting Managers as senior: 81.0%, still clearly missed</li><li>Largest and most robust gap</li></ul></div>
+    <div class="card amber"><p class="sub">Finding 2 · new hires kept 6 months · target ≥ 86%</p><p class="big">86.8%</p>
+      <p class="sub">95% interval 85.0–88.3% · 1,423 of 1,640 hires</p><span class="badge warn">≈ Met, on the line</span>
+      <ul><li>Every year's interval includes 86%</li><li>Countries 84.7–89.2%, units 85.1–88.8%: no reliable outlier</li><li>Read "met" as "on the line"</li></ul></div>
+    <div class="card teal"><p class="sub">Finding 3 · regretted turnover · limit ≤ 7.5%</p><p class="big">3.3–5.1%</p>
+      <p class="sub">4.3 · 3.7 · 3.3 · 3.3 · <strong>5.1%</strong> (2021–2025)</p><span class="badge ok">✓ Within limit, rising</span>
+      <ul><li>2025: 82 regretted exits vs 46 in 2024</li><li>Romania 6.7%, Ireland 6.2%, Bulgaria 6.1%: closest to the limit</li><li>Caveat: young, growing workforce may explain part</li></ul></div>
+  </div>
+  <div class="callout" style="margin-top:16px">How to read the verdicts: <strong>"clearly"</strong> means the whole 95% interval is on one side of the target (for senior hires even the top of the interval, 83.1%, is below 90%). <strong>"On the line"</strong> means the interval includes the target, so chance alone could flip it.</div>
+  <div class="notes">(90s) The verdict words come from the 95% interval: "clearly" means the whole interval is on one side of the target. For senior, even the top of the interval (83.1%) is below 90%.</div>
+</section>
+
+<!-- 11a: the economic question --------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">3</span>Dashboard and key findings</span><span class="time">4 min</span></div>
+  <h2>The economic question, in plain words</h2>
+  <div class="grid g2" style="margin-top:4px">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card teal"><h3>3 objectives = 3 different kinds of leaving</h3><p>New hires leaving early, senior hires leaving early, and regretted voluntary exits. We test each separately, because the economy can push them in different directions.</p></div>
+      <div class="card teal"><h3>5 signals × 3 objectives = 15 questions</h3><p>Unemployment, job vacancies, inflation, economic sentiment and GDP growth, each tested against each objective.</p></div>
+      <div class="qbox"><small>One of the 15 questions</small>"When unemployment is higher than usual in a country, are employees there more likely to have a regretted exit?"</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card coral"><h3>Why we need leavers and stayers</h3><p>Looking only at the people who left tells us what the economy looked like <em>when they left</em>, but not whether it made leaving <strong>more likely</strong>. For that we compare everyone at risk at the same moment: 65,184 person-months for turnover.</p></div>
+      <div class="card"><h3>Three terms you'll hear</h3><ul>
+        <li><strong>Odds ratio (OR):</strong> 1.00 = no link; 0.82 = 18% lower odds of leaving per typical rise in the signal</li>
+        <li><strong>p:</strong> "could this one result be luck?" (small = unlikely luck)</li>
+        <li><strong>q:</strong> the same, after allowing for asking 15 questions. We need q below 0.05</li></ul></div>
+      <p class="sub" style="margin:0">Testing <em>any</em> exit is possible as an extra exploratory check, but it answers a broader question than the three objectives, so it isn't part of the findings.</p>
+    </div>
+  </div>
+  <p class="plain" style="margin-top:14px"><b>The key idea</b>We ask whether changes in external conditions go together with changes in the likelihood of a specific type of leaving, comparing each country only with itself.</p>
+  <div class="notes">(45s) This is the bridge into finding 4. Read the example question aloud, then the key idea at the bottom. If challenged on "why not all leavers": it mixes kinds of leaving that react to the economy in opposite directions (fewer quits but more layoffs when unemployment is high), and it's not what the brief asks.</div>
+</section>
+
+<!-- 11 --------------------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">3</span>Dashboard and key findings</span><span class="time">4 min</span></div>
+  <h2>Finding 4: no economic signal lines up with leaving</h2>
+  <div class="grid" style="grid-template-columns: 1fr 1.25fr; gap: 18px">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card navy"><p class="big">0 of 15</p><p>tests significant after correcting for running 15 tests · smallest q = <strong>0.53</strong> (needs &lt; 0.05)</p></div>
+      <div class="card"><h3>Method</h3><ul><li>One row per person (or person-month), not averages</li><li>Each country compared only with itself, plus a time trend</li><li>Errors clustered by country-month; Benjamini-Hochberg correction</li></ul></div>
+      <div class="card"><h3>Why trust a "no"</h3><ul><li>Same code finds a planted effect in synthetic data</li><li>8 alternative setups tested (timing, lags, controls, errors): none changed the answer</li><li>Pooling countries flips unemployment's direction (0.97 → 1.11): that's the confounding the method removes</li></ul></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <img class="shot" src="assets/challenge.png" alt="Challenge section: scatter and association table" style="max-height:400px;object-fit:cover;object-position:top">
+      <div class="callout amber"><strong>Only hint:</strong> higher business confidence, fewer regretted exits (odds ratio 0.82, p = 0.04). With 15 tests, a p this small is expected by chance, so q = 0.53. <strong>No evidence of an effect is not evidence of no effect</strong>: 57 senior leavers is a small sample.</div>
+    </div>
+  </div>
+  <div class="notes">(90s) This is the required non-finding. Explain p vs q in one line: p asks "could this be luck?" for one test; q asks the same after running 15 tests. Association is not causation either way. (The 8 alternatives were run before the December-lag fix; the fix only raised the smallest q from 0.46 to 0.53.)</div>
+</section>
+
+<!-- 12 --------------------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">3</span>Dashboard and key findings</span><span class="time">4 min</span></div>
+  <h2>How the conclusion was reached</h2>
+  <img class="shot" src="conclusion_flow.png" alt="Diagram from raw data to four findings" style="max-height:590px;width:auto;margin:0 auto">
+  <div class="notes">(20s, or skip if short on time) One picture of the whole chain: two inputs, cleaning and the time-safe join, measuring and testing, four findings, and the verification strip at the bottom.</div>
+</section>
+
+<!-- 13 --------------------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">4</span>Tradeoffs, AI usage, next steps</span><span class="time">3 min</span></div>
+  <h2>Tradeoffs and limitations</h2>
+  <div class="grid g2" style="margin-top:6px">
+    <div class="card amber"><h3>Limits of the evidence</h3><ul>
+      <li>Synthetic, hiring-only workforce (nobody before 2020): turnover trends mix real change with a maturing workforce</li>
+      <li>Six countries, about five years: only moderate-to-large effects detectable</li>
+      <li>The turnover model doesn't control for time since hire, which strongly drives leaving (2.4% a month in the first 6 months vs 0.5% after 2 years)</li>
+      <li>Definitions rest on assumptions until the clarification answers arrive (each is a config switch)</li>
+      <li>Only inflation has first-release values; others are today's revised figures (inflation checked: never revised)</li>
+      <li>Italy's vacancy rate uses a different definition (Eurostat flag)</li></ul></div>
+    <div class="card teal"><h3>Deliberate choices</h3><ul>
+      <li>DuckDB + FastAPI + plain HTML: free, offline, easy to review; maps cleanly to Databricks + Power BI</li>
+      <li>Conservative lags: can only make data slightly stale, never leak</li>
+      <li>One lag per series (Ireland publishes a month earlier; not exploited)</li>
+      <li>Logistic regression over machine learning: the question is "is there a link?", not "predict who leaves"</li>
+      <li>Full rebuild instead of incremental loads, which is right at 2,400 rows</li></ul></div>
+  </div>
+  <div class="notes">(60s) Be upfront: the non-finding is partly a power limitation. Every limitation here is also written in the source register or findings doc.</div>
+</section>
+
+<!-- 14 --------------------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">4</span>Tradeoffs, AI usage, next steps</span><span class="time">3 min</span></div>
+  <h2>How I used the AI agent, and stayed accountable</h2>
+  <div class="grid g2" style="margin-top:6px">
+    <div class="card teal"><h3>Decisions that stayed mine</h3><ul>
+      <li>Software emphasis; repository shape (changed the agent's layout to the brief's)</li>
+      <li>Cut clarification questions 10 → 3; analyse blind, not from the data generator</li>
+      <li>Indicator set (from my own search, fact-checked by the agent)</li>
+      <li>Methodology: when I found I hadn't been consulted, every option was put back to me and re-run</li>
+      <li>Lag fixes, dashboard changes, pooling rule</li></ul></div>
+    <div class="card coral"><h3>Agent errors caught by verification</h3><ul>
+      <li>Defect list from reading code: 3 overstatements, 1 missed; fixed by profiling</li>
+      <li>Two licence URLs recalled from memory were wrong</li>
+      <li>0-day sentiment lag leaked December data; found by the release-date spot check</li>
+      <li>Interval formula crashed on tiny slices; found by its own test</li>
+      <li>Accessibility contrast failures; found by the axe audit</li></ul></div>
+  </div>
+  <div class="callout" style="margin-top:14px"><strong>Verification, not trust:</strong> tests, an independent recomputation of every number (107 / 107), live checks against provider APIs and release dates, screenshots reviewed. All logged in <code>AI_USAGE.md</code>, including my own corrections.</div>
+  <div class="notes">(75s) The brief grades how I directed and verified the agent. Pick one story: the lag leak (my question → spot check → leak found → my decision on the fix → re-run).</div>
+</section>
+
+<!-- 15 --------------------------------------------------------------- -->
+<section class="slide">
+  <div class="top"><span class="section"><span class="n">4</span>Tradeoffs, AI usage, next steps</span><span class="time">3 min</span></div>
+  <h2>Next steps</h2>
+  <div class="grid g2" style="margin-top:6px">
+    <table>
+      <tr><th>#</th><th>Next step</th><th>Why</th></tr>
+      <tr><td>1</td><td><strong>Apply the clarification answers</strong></td><td>Change config, rerun: senior scope and the headcount rule</td></tr>
+      <tr><td>2</td><td><strong>Act on senior retention</strong></td><td>The clear gap; look at internal drivers (onboarding, role fit)</td></tr>
+      <tr><td>3</td><td><strong>Release-calendar ingest</strong></td><td>Exact publication dates and per-country lags instead of fixed lags</td></tr>
+      <tr><td>4</td><td><strong>Point-in-time vintages</strong></td><td>First-release values for every signal, not only inflation</td></tr>
+      <tr><td>5</td><td><strong>Robustness checks</strong></td><td>Add time since hire to the turnover model; linear-probability and survival models alongside logistic</td></tr>
+      <tr><td>6</td><td><strong>Productionise</strong></td><td>ADF + Databricks + Power BI per the mapping; CI/CD, alerts, RLS</td></tr>
+    </table>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card navy"><h3>Effort</h3><p>Approximately <strong>[fill in] hours</strong> across framing, sources, pipeline, analysis, dashboard, and documentation.</p></div>
+      <div class="card"><h3>Try it</h3><p><code>git clone …/asteria-retention-signals</code><br><code>uv sync</code> · <code>uv run asteria run</code> · <code>uv run asteria serve</code></p></div>
+      <div class="card"><h3>Read more</h3><p>docs/findings.md · docs/analysis_explained.md · docs/source_register.md · docs/architecture.md · AI_USAGE.md</p></div>
+    </div>
+  </div>
+  <div class="notes">(45s) Close on the decision: senior retention is where leaders should act; the economy doesn't explain it with this data. Fill in the effort estimate honestly before presenting.</div>
+</section>
+
+</div>
+<div id="notes" aria-live="polite"></div>
+<div id="hint">← → navigate · N notes · P print / PDF</div>
+<script>
+  const slides = [...document.querySelectorAll(".slide")];
+  const notes = document.getElementById("notes");
+  let i = Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1), 10) || 1) - 1));
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle("active", k === i));
+    const note = slides[i].querySelector(".notes");
+    notes.textContent = `Slide ${i + 1} / ${slides.length}. ${note ? note.textContent : ""}`;
+    history.replaceState(null, "", `#${i + 1}`);
+  }
+  function fit() {
+    const s = Math.min(innerWidth / 1280, innerHeight / 720);
+    document.getElementById("stage").style.transform = `translate(-50%, -50%) scale(${s})`;
+  }
+  addEventListener("resize", fit);
+  addEventListener("keydown", (e) => {
+    if (["ArrowRight", "PageDown", " "].includes(e.key)) show(i + 1);
+    if (["ArrowLeft", "PageUp"].includes(e.key)) show(i - 1);
+    if (e.key === "Home") show(0);
+    if (e.key === "End") show(slides.length - 1);
+    if (e.key.toLowerCase() === "n") notes.classList.toggle("show");
+    if (e.key.toLowerCase() === "p") print();
+  });
+  document.getElementById("stage").addEventListener("click", (e) => show(e.clientX > innerWidth / 2 ? i + 1 : i - 1));
+  fit(); show(i);
+</script>
+</body>
+</html>

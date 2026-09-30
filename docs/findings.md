@@ -38,6 +38,7 @@
 - The single nominal result is **higher economic sentiment with fewer regretted exits**: odds ratio 0.82 per within-country SD, 95% CI 0.68–0.99, p = 0.04, q = 0.53. With 30 tests, about 1.5 results at p < 0.05 are expected by chance, so this is not evidence.
 - **Confounding is visible:** for unemployment and regretted exits, the naive pooled odds ratio is 0.97, and it becomes 1.11 once countries are compared only with themselves. Pooling across countries mixes country differences with the signal.
 - **Power is limited:** 57 senior early exits, 232 new-hire early exits, and 217 regretted exits across six countries and about five years. Only moderate-to-large effects could have been detected.
+- **Not controlled for:** time since hire. Leaving is far more likely early in a job (2.4% a month in the first 6 months vs about 0.5% after 2 years), and the turnover model adjusts for country and a time trend but not for tenure. Next step: add tenure bands to the turnover model.
 - **Would need:** more countries or employers, a longer history, individual-level drivers (pay, manager, role changes), and point-in-time vintages for all indicators, not only inflation.
 
 ## Data health and its effect on these findings

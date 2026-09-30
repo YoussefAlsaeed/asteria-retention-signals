@@ -38,7 +38,7 @@ uv run pytest                               # unit, SQL, API and browser tests
 uv run asteria ingest --mode live           # refresh from Eurostat / World Bank (needs internet)
 ```
 
-Where to look next: [docs/findings.md](docs/findings.md) (results), [docs/analysis_explained.md](docs/analysis_explained.md) (method for engineers), [docs/source_register.md](docs/source_register.md) (sources, licences, lags), [AI_USAGE.md](AI_USAGE.md).
+Where to look next: [docs/dashboard_guide.md](docs/dashboard_guide.md) (how to read the dashboard), [docs/findings.md](docs/findings.md) (results), [docs/analysis_explained.md](docs/analysis_explained.md) (method for engineers), [docs/source_register.md](docs/source_register.md) (sources, licences, lags), [docs/architecture.md](docs/architecture.md) (production mapping), [presentation/deck.html](presentation/deck.html) (deck; PDF alongside), [AI_USAGE.md](AI_USAGE.md).
 
 ## Development setup
 
@@ -92,6 +92,7 @@ uv run asteria serve    # then open http://127.0.0.1:8000  (API reference: /docs
 
 | View | What it shows |
 |---|---|
+| Key findings | The four findings with live numbers and verdicts; "Show me" sets the filters for each |
 | Explore | One filter row scoping everything: objective, country, business unit, period grain, definition (main or sensitivity), external signal. Kept in the URL. |
 | Understand | Objective trend with 95% interval and target line; the selected signal as known each month, as a separate chart (different units, never a dual axis) |
 | Challenge | Country-quarter scatter sized by sample; naive vs within-country association table with q-values and a plain-language verdict |
