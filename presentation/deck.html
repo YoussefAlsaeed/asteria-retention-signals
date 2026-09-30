@@ -475,13 +475,13 @@
   <h2>Next steps</h2>
   <div class="grid g2" style="margin-top:6px">
     <table>
-      <tr><th>#</th><th>Next step</th><th>Why</th></tr>
-      <tr><td>1</td><td><strong>Add time since hire</strong></td><td>To the turnover model: the strongest driver of leaving in this data</td></tr>
-      <tr><td>2</td><td><strong>Act on senior retention</strong></td><td>The clear gap; look at internal drivers (onboarding, role fit)</td></tr>
-      <tr><td>3</td><td><strong>Release-calendar ingest</strong></td><td>Today: one fixed lag per indicator, checked against real release dates. Next: load each value's actual release date</td></tr>
-      <tr><td>4</td><td><strong>Point-in-time vintages</strong></td><td>First-release values for every signal, not only inflation</td></tr>
-      <tr><td>5</td><td><strong>Robustness checks</strong></td><td>Linear-probability and survival models alongside logistic</td></tr>
-      <tr><td>6</td><td><strong>Productionise</strong></td><td>ADF + Databricks + Power BI; proposal in docs/architecture.md</td></tr>
+      <tr><th>#</th><th>Next step</th><th>What it means</th></tr>
+      <tr><td>1</td><td><strong>Add time since hire</strong></td><td>Account for how long someone has worked there: new employees are much more likely to leave</td></tr>
+      <tr><td>2</td><td><strong>Act on senior retention</strong></td><td>Investigate why senior hires leave: onboarding, role fit</td></tr>
+      <tr><td>3</td><td><strong>Release-calendar ingest</strong></td><td>Record the actual publication date of every economic value, instead of one fixed delay</td></tr>
+      <tr><td>4</td><td><strong>Point-in-time vintages</strong></td><td>Keep the value that was available at the time, not today's revised history</td></tr>
+      <tr><td>5</td><td><strong>Robustness checks</strong></td><td>Try other statistical methods and see whether the conclusions hold</td></tr>
+      <tr><td>6</td><td><strong>Productionise</strong></td><td>Move from DuckDB / FastAPI / HTML to ADF + Databricks + Power BI</td></tr>
     </table>
     <div style="display:flex;flex-direction:column;gap:12px">
       <div class="card"><h3>Try it</h3><p><code>git clone …/asteria-retention-signals</code><br><code>uv sync</code> · <code>uv run asteria run</code> · <code>uv run asteria serve</code></p></div>
